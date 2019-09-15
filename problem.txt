@@ -1,0 +1,473 @@
+配置文件 ：
+android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >//全屏
+android:screenOrientation="landscape"//横屏
+
+(关键代码：android:theme="@android:style/Theme.NoTitleBar.Fullscreen"，如果想只是去除标题栏就后面不用加Fullscreen了，另外，如果想要整个应用都去除标题栏和状态栏，就把这句代码加到<application。。标签里面，如果只是想某个activity起作用，这句代码就加到相应的activity上):
+隐藏标题栏需要使用预定义样式：android:theme=”@android:style/Theme.NoTitleBar”.
+隐藏状态栏：android:theme=”@android:style/Theme.NoTitleBar.Fullscreen”
+
+
+
+java文件：
+public void onCreate(Bundle savedInstanceState) { 
+super.onCreate(savedInstanceState); //去除title   
+requestWindowFeature(Window.FEATURE_NO_TITLE);   //去掉Activity上面的状态栏 
+getWindow().setFlags(WindowManager.LayoutParams. FLAG_FULLSCREEN , WindowManager.LayoutParams. FLAG_FULLSCREEN);     
+setContentView(R.layout.main); }
+或者
+requestWindowFeature(Window.FEATURE_CUSTOM_TITLE); 
+getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.custom_title_1);
+R.layout.custom_title_1  这个就是你的标题文件布局
+
+
+
+布局文件：//混合布局
+android:weightSum="2"
+android:layout_weight="1"//高或宽为0dp
+android:gravity="top|left"
+android:padding=""  //内部边距
+
+android:layout_above="@+id/名字" 	             当前控件在指定控件的上面
+android:layout_below="@+id/名字"                          当前控件在指定控件的下面
+android:layout_toRightOf="@+id/名字"                    当前控件在指定控件的右面
+android:layout_toLeftOf="@+id/名字"                      当前控件在指定控件的左面
+
+android:layout_alignLeft="@+id/名字"	           当前控件对齐指定控件的左边
+android:layout_alignRight="@+id/名字"	           当前控件对齐指定控件的右边
+android:layout_alignTop="@+id/名字"	           当前控件对齐指定控件的上边
+android:layout_alignBottom="@+id/名字"	           当前控件对齐指定控件的下边
+android:layout_alignBaseline="@+id/名字"   当前控件与指定控件的基准线对齐
+
+android:layout_alignParentLeft="true"	           当前控件对齐上级控件的左边
+android:layout_alignParentRight="true"	           当前控件对齐上级控件的右边
+android:layout_alignParentTop="true"	           当前控件对齐上级控件的上边
+android:layout_alignParentBottom="true"	           当前控件对齐上级控件的下边
+
+android:layout_centerHorizontal="true"         当前控件水平居中
+     android:layout_centerVertical="true"              当前控件垂直居中
+ 
+android:layout_marginRight="16dp"              当前控件与对齐控件右边的距离
+ android:layout_marginLeft="16dp"	     当前控件与对齐控件左边的距离
+ android:layout_marginTop="16dp"                当前控件与对齐控件上边的距离
+ android:layout_marginBottom="16dp"           当前控件与对齐控件下边的距离
+ android:layout_margin="16dp"		     当前控件与对齐控件四边的距离
+
+ android:layout_gravity="top"		        当前控件位于上级控件的顶部
+ android:layout_gravity="left"                             当前控件位于上级控件的左边
+android:layout_gravity="center_vertical"            当前控件垂直居中于上级控件
+  android:layout_gravity="bottom|center_horizontal"  
+                                                        当前控件位于上级控件的底部且垂直居中
+。。。。。。
+
+有时有些属性与属性、属性与控件之间会发生冲突，要根据实际情况调试。
+
+TextView tv=(TextView)MainActivity.this.findViewById(R.id.textView2);
+    	tv.setText("武汉学院");
+    	tv.setTextColor(Color.rgb(0, 200, 0));
+    	tv.setBackgroundColor(Color.argb(200,0, 0, 200));
+
+LinearLayout layout=(LinearLayout) findViewById(R.id.test);//切换背景图片
+    	layout.setBackgroundResource(R.drawable.ic_launcher);
+
+android:baselineAligned="false"
+
+
+响应：
+android:onClick="bu1"
+public void bu1(View view){
+    	TextView v=(TextView) findViewById(R.id.textview1);
+    	if(x==true){v.setBackgroundResource(R.drawable.f1);x=false;}
+    	else {v.setBackgroundResource(R.drawable.f2);x=true;}
+    		
+    }
+
+public void bu2(){
+    	Button b=(Button) findViewById(R.id.button2);
+    	b.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+			ImageView v=(ImageView) findViewById(R.id.imageView1);
+		    	if(x==true){v.setImageResource(R.drawable.f1);x=false;}
+		    	else {v.setImageResource(R.drawable.f2);x=true;}
+			
+			}
+			/**Bitmap bitm=BitmapFactory.decodeResource(getResources(), R.drawable.f1);
+			v.setImageBitmap(bitm);*/
+		});
+    	
+    	
+    }
+
+
+
+
+
+public void bu2(){
+    	TextView b1=(TextView) findViewById(R.id.text1);
+    	b1.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				Intent i=new Intent(MainActivity2.this,MainActivity.class);//切页
+				MainActivity2.this.startActivity(i);//可省略前缀
+				MainActivity2.this.finish();//关闭页面
+			}
+		});
+    }
+
+
+
+<intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+
+
+
+
+
+客户端实现：
+wifi：
+
+ <!--添加网络权限  -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+//创建线程
+    public class mythread implements Runnable{
+
+		@Override
+		public void run() {
+			try {
+				Socket soc=new Socket("192.168.4.1",333);
+				OutputStream out=soc.getOutputStream();//inputstream输入
+				out.write("GEC\r\n".getBytes());//发送链接请求
+				soc.close();//不一定写在线程里
+			} catch (UnknownHostException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+			
+		}
+    	
+    }
+
+public void buttc(View view){
+    	Thread t=new Thread(new mythread());
+    	t.start();
+    }
+
+蓝牙：
+
+<uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+
+//创建线程
+	private String address="";
+   	private String uiddname="";
+
+    public class mythread implements Runnable{
+
+		@Override
+		public void run() {
+//获取蓝牙设备，可不写入线程
+			BluetoothAdapter a=BluetoothAdapter.getDefaultAdapter();//获取适配器
+			BluetoothDevice d=a.getRemoteDevice(address);//获取蓝牙设备
+//连接服务端
+			UUID uuid=UUID.fromString(uiddname);//获取uuid，可不写入线程
+			BluetoothSocket sco=d.createInsecureRfcommSocketToServiceRecord(uuid);
+//获取socket
+			sco.connect();
+//
+			OutputStream out=soc.getOutputStream();//inputstream输入
+			out.write(数据);//发送链接请求
+			sco.close();//不一定写在线程里
+			
+		}
+    	
+    }
+
+public void buttc(View view){
+    	Thread t=new Thread(new mythread());
+    	t.start();
+    }
+
+
+
+
+//提示
+Toast.makeText(MainActivity.this, "连接成功", Toast.LENGTH_SHORT).show();
+
+
+LinearLayout lay=(LinearLayout) LayoutInflater.from(MainActivity.this).inflate(R.layout.test, null);
+    		Toast toa=new Toast(MainActivity.this);
+    		toa.setView(lay);
+    		toa.show();
+
+
+
+
+
+主线程：默认代码
+子线程：自己创建的，所有子线程并列执行
+
+
+
+
+
+
+
+安卓界面刷新原则：
+   1.只能在主线程里刷新界面，不能在子线程里刷新，
+   2.并且不能阻塞主线程，不能在主线程里执行耗时的程序。
+
+//用Timer+handelr刷新界面
+public void newui(View view){
+		iv=(ImageView) findViewById(R.id.imageView1);
+		timer=new Timer();
+		timer.schedule(new TimerTask() {//
+			
+			@Override
+			public void run() {
+				
+				handler.sendEmptyMessage(1);
+				if(n>=img.length)timer.cancel();
+					n++;
+			}
+		},
+				0,//多少毫秒之后启动
+				300);//刷新频率
+		
+	}
+	
+	
+		
+	Handler handler=new Handler(){
+		public void handleMessage(android.os.Message msg) {
+			if(msg.what==1)iv.setImageResource(img[n]);
+		};
+	};
+
+
+//用线程+runOnUiThread()刷新界面
+public void newui(View view){
+		iv=(ImageView) findViewById(R.id.imageView1);
+		Thread tr=new Thread(new mythread());
+		tr.start();
+		
+	}
+	public class mythread implements Runnable{
+
+		@Override
+		public void run() {
+			for(int i=0;i<img.length;i++)
+			{
+				Test.this.runOnUiThread(new Runnable() {
+					
+					@Override
+					public void run() {
+						iv.setImageResource(img[n]);
+						
+						
+					}
+				});
+				n++;
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					// TODO 自动生成的 catch 块
+					e.printStackTrace();
+				}
+			}
+			
+		}
+
+
+
+public class mythread implements Runnable{
+
+		@Override
+		public void run() {
+			for(int i=0;i<img.length;i++)
+			{
+				handler.sendEmptyMessage(1);
+				n++;
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+			
+		}
+		
+	}
+	
+	Handler handler=new Handler(){
+		public void handleMessage(android.os.Message msg)
+		{
+			if(msg.what==1)iv.setImageResource(img[n]); 
+		}
+	};
+
+
+
+//在drawable目录下创建xml的selector文件
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:state_pressed="true" android:drawable="@drawable/deng7"></item>
+	<item android:state_pressed="false" android:drawable="@drawable/deng1"></item>
+</selector>
+
+
+
+//sewitch控件
+<Switch
+        
+android:id="@+id/switch1"
+        
+android:layout_width="wrap_content"
+        
+android:layout_height="wrap_content"
+        
+android:textOn="关"
+        
+android:textOff="开"
+        
+android:switchMinWidth="40dp"
+        
+android:track="@drawable/switch_track"
+        
+android:thumb="@android:color/transparent" />
+
+
+ mSwitch = (Switch) findViewById(R.id.switch_);
+       
+ mText = (TextView) findViewById(R.id.text_);
+        // 添加监听
+        
+mSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            
+@Override
+            
+public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) 
+{
+                if (isChecked){
+                    mText.setText("开启");
+                }
+else {
+                    mText.setText("关闭");
+                }
+  
+          }
+        });
+
+
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/switch_close" android:state_checked="false" />
+    
+<item android:drawable="@drawable/switch_open" android:state_checked="true" />
+
+</selector>
+
+
+
+
+//seekbar
+android:thumb="@drawable/"
+
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@android:id/background" android:drawable="@drawable/"></item>
+    <item android:id="@android:id/progress" android:drawable="@drawable/"></item>
+</layer-list>
+
+、
+
+public void rokertest(){
+		final RockerView rv=(RockerView) findViewById(R.id.rokerclick);
+		rv.setOnShakeListener(DirectionMode.DIRECTION_8, new OnShakeListener() {
+			
+			@Override
+			public void onStart() {
+			
+			}
+			
+			@Override
+			public void onFinish() {
+				
+			}
+			
+			@Override
+			public void direction(Direction direction) {
+				if(direction==Direction.DIRECTION_RIGHT)
+					rv.setBackgroundColor(Color.rgb(222, 222, 222));
+			}
+		});
+		
+	}
+
+
+
+public void btn1(View view){
+		RockerView xv=(RockerView) findViewById(R.id.rokerclick);
+		int x=xv.getVisibility();
+		if(x==View.VISIBLE)xv.setVisibility(View.INVISIBLE);
+		else xv.setVisibility(View.VISIBLE);
+	}
+	
+
+
+
+
+
+public void f(){
+		Timer tim=new Timer();
+		tim.schedule(new TimerTask() {
+			
+			@Override
+			public void run() {
+				Intent intent=new Intent(Test.this,MainActivity.class);
+				startActivity(intent);
+				finish();
+			}
+		}, 2000);
+		
+	}
+
+
+
+public void save(View view){
+		SharedPreferences sp=getSharedPreferences("f1", MODE_PRIVATE);
+		SharedPreferences.Editor spe=sp.edit();
+		spe.putInt("henggun", x);
+		spe.commit();
+	}
+	
+	public void load(View view){
+		SharedPreferences sp=getSharedPreferences("f1", MODE_PRIVATE);
+		x=sp.getInt("henggun", 0);
+	}
+
+
+
+
+public void f1(){
+		final Button b1=(Button) findViewById(com.example.wifi.R.id.button2);
+		b1.setOnTouchListener(new OnTouchListener() {
+			
+			@Override
+			public boolean onTouch(View arg0, MotionEvent arg1) {
+				int x=arg1.getAction();
+				if(x==MotionEvent.ACTION_DOWN)b1.setBackgroundResource(com.example.wifi.R.drawable.deng6);
+				
+			}
+		});
+	}
