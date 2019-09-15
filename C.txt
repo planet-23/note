@@ -1,0 +1,73 @@
+
+
+
+
+
+
+
+
+
+
+
+动态存储分配
+malloc(sizeof());			//p=(char *)calloc(10,sizeof(char));
+calloc(n,sizeof());
+free();
+
+
+
+
+
+位运算：
+~&|^>><<
+
+
+
+
+文件处理：
+1、文件指针：FILE *fp;
+打开关闭文件：r rb w wb a ab r+ rb+ w+ wb+ a+ ab+
+fopen("文件","文件使用权限");		//p335   打开失败返回NULL
+fclose(fp);
+
+判断if(fp=fopen("文件","文件使用权限")==null)exit(0);		//退出程序      #include<stdlib.h>
+
+2、数据输入输出
+(1)单个字符：
+从文件读入：
+getc(fp);
+fgetc(fp);				//EOF (文件结束标记  值为-1  必须是文本文件) end of file  
+向文件输出：
+putc(ch,fp);
+fputc(ch,fp);
+
+
+文件结束函数feof(fp);			//结束返回1   未结束返回0
+
+(2)字符串：
+fgets(str,n(读入n-1字符数),fp);		//会自动添加换行符
+fputs(str,fp);			//'\0'不会输出，也不会自动添加换行
+
+
+(3)
+fscanf(文件指针,"输入格式",输入列表);
+fprintf(文件指针,"输出格式",输出列表);
+
+
+(4)二进制文件
+fread(buffer,size,count,fp);
+fwrite(buffer,size,count,fp);		//fwrite(&s,sizeof(int),1,fp);
+
+
+(5)文件位置
+fseek(fp,offset（移动字节数，可为负值）,origin);		//移动文件位置指针到指定位置
+ftell(fp);				//返回当前指针位置离开头的字节数，从0开始
+rewind(fp);			//反绕函数  返回文件起始位置
+
+起始位置标识
+SEEK_SET	0	文件开始
+SEEK_END	2	文件末尾
+SEEK_CUR	1	文件当前位置
+
+
+
