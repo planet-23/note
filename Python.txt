@@ -1,2 +1,42 @@
+ PYTHON语言基础：
+python是动态类型语言，变量不需要显式声明数据类型，解释器自动确定变量类型        #注释符号
+对象值比较==与引用判别is
+
+函数的定义：
+def f():
+    函数体
+
+
+顺序结构：
+选择结构：if elif  else
+循环结构：range(start,stop[,step])
+        for 变量 对象集合：
+            循环语句块
+        while(条件表达式):
+            循环语句块
+break语句，continue语句
+
+enumerate()函数与循环：
+for i,s in enumerate(array,start=1):
+    print("{1} {0} {1}".format(i,s))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 %d %s.....
 print（"%s"%string）                 #分割用%而不用，
