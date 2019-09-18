@@ -1,0 +1,119 @@
+1,用useradd命令以默认值建一个用户jack
+useradd jack
+
+2,用useradd命令新建一个用户rose,uid为555,gid为500,别名注释为:rhce,主目录在/rose
+useradd -u 555 -g 500 -c RHCE -d /rose rose 
+
+
+3,在/etc/passwd中查看两个新加的用户信息 (tail,vipw,cat...)
+tail -2 /etc/passwd
+
+4,在/etc/group中查看有没有相应的组生成,并用用户信息查询命令查看 (id finger groups)
+id jack
+id rose
+
+
+5,用usermod命令修改jack的uid为666,用户名改为jacky
+usermod -u 666 jack
+usermod -l jacky jack
+
+
+6,用passwd命令把jacky的密码设置为123
+passwd jacky
+
+
+7,切换控制台,用jacky帐户登录系统
+su jacky
+
+
+8,换回控制台,用usermod命令将jacky锁定,验证jacky能否再次登录系统,解锁后呢?
+su root
+usermod -L jacky
+su jacky 
+
+9,用usermod命令将rose加入到root组,用命令查看是否加入成功,查看/etc/group中root组中有无rose
+
+usermod  -G root rose 
+
+head -2 /etc/group
+
+10,新建一个用户zhangsan,查看shangsan的信息,利用命令将zhangsan彻底删除,查看zhangsan组有没有被删除
+useradd zhangsan
+id zhangsan
+userdel -r zhangsan
+tail -2 /etc/group
+
+11,用passwd命令查看拥护rose的密码状态,设置密码然后清空密码后看能否登录?
+passwd -S rose 
+passwd -d rose
+passwd -d rose
+
+12,用groupadd命令添加一个组为renshi,并另外建一个组为caiwu,gid为888,在/etc/group中查看新加的两个组的信息
+groupadd renshi
+groupadd -g 888 caiwu
+tail -n 2 /etc/group
+
+13,用groupmod命令将renshi组改名为shichang,再查看有无改名
+groupmod -n shichang renshi
+tail -n 2 /etc/group
+
+14,用groupdel删除yinhe这个组,看能否删除,rose组呢?为什么不能删除
+groupdel yinhe
+groupdel rose
+
+15,利用gpasswd命令将一个新用户qq加入shichang组,再看shichang组能否删除,这个实验说明了什么?
+gpasswd -a qq shichang
+groupdel shichang
+
+16,用gpasswd将jacky,rose加入caiwu组,查看用户与组信息看有无成功,后来又把jacky从caiwu组删除,如何操作?
+gpasswd -M jacky,rose caiwu
+groups 
+gpasswd -d jacky caiwu
+
+17,以root身份建一个目录/test,查看这个目录的默认权限是?
+mkdir /test
+ls -l /test
+
+18,进入/test目录中,建一个普通文件abc,查看其默认的权限为?
+cd /test
+mkdir abc
+ls -l
+
+19,转换为普通用户yinhe身份,看能否进入/test目录,能否在里面创建文件,能否用vi编辑abc文件?
+su yinhe
+cd /test
+mkdir cad
+vi abc
+
+20,转换回root身份,利用chmod修改/test目录的权限让yinhe用户可以创建文件,但不能查看文件abc里的内容,该如何设置权限?
+su root
+密码
+chmod o+w /test
+chmod o-w /test/abc
+
+21,转换到yinhe来做测试,并查看银河所创建的文件yinhe的属性,(权限,所有者,所属组)
+
+
+22,回到root身份,测试root能否编辑刚才用户yinhe所建文件yinhe?
+
+23,root在/test中新建一个目录123,设置权限为yinhe用户不能进入,另一个普通用户rose可以进入,该如何设置该文件的权限?
+
+
+24,root在/test中新建一个普通文件aaa,设置权限为rose用户不能查看修改内容,另一个普通用户yinhe可以查看修改,该如何设置该文件的权限?
+
+25,转换用户身份做上面两个实验的测试,看能否成功
+
+
+26,转回root身份,新建一个目录/test2,设置起权限为770
+
+27,新建一个用户tom,并设置密码,转换到tom身份,测试tom能否进入/test2目录,
+
+
+28,转换回root,将目录/test2的所有者改为tom,所属组改为yinhe
+
+
+29,转换用户到tom,看他能否进入并创建修改删除文件,转换到yinhe呢?若换成rose用户呢?分别一一作出测试体会权限的设置!
+
+
+30,将rose加入root组后还能否对/test2进行操作呢?
+

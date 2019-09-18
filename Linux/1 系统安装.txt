@@ -1,0 +1,106 @@
+一、Linux发展史
+        Linux之父：林纳斯托瓦兹
+        Linux发布时间：1991年10月5日
+        Linux历史：unix（1969）——minx——Linux
+        
+二、Linux五大支柱
+        unix、minx、GNU、POSIX、Internet
+        
+三、Linux特征
+        GNU：（GNU is Not Unit）:世界知名的自由软件项目
+        GPL：（GNU General Public License）通用公共许可证
+                最初的创造者Linus Torvalds保留版权；
+                其他人可随意处置该软件；
+                版权不能完全被控制。
+         LGPL（Lesser General Public License）次级公共许可证
+                 不需要完全开放源代码               
+            定义Lin ux属于开源操作系统、开源软件（开放源代码）
+
+四、Linux的发行版本
+        centos
+        redhat
+                RHCSA、RHCE、RHCA
+
+五、Linux操作系统安装
+1、准备
+        8G U盘   会被格式化     备份u盘资料  
+        软碟通
+        “如何制作centos7 u盘安装盘”
+2、BIOS选择从U盘启动进入到安装界面，选择第一个选项进行安装
+       选择安装界面的语言——软件包（默认是最小化安装。gnome）——分区（自动分区   手动       / :60G     /boot :500M   swap  :2048M）
+       开始安装    —— 设置root密码——创建一个普通用户——完成——重启——接受协议——输入用户名密码（点击“未列出”---root——密码）
+
+六、基础命令
+    终端介绍
+1、命令的使用方式
+        命令   [选项]   [参数]   [操作对象]
+2、命令选项
+        长选项：--     例如：--help
+        短选项：-      例如：-a   -b
+3、内部命令和外部命令
+        内部命令：内核本身存在   cd等
+        外部命令：以二进制文件格式存在的命令   mkdir等
+        区分：type   命令 
+                输出结果显示：shell内嵌则为内部命令
+                                        有路径存在则为外部命令
+4、基础命令
+        date：查看时间
+            
+        cal：查看日历
+        bc：计算器
+        whatis：后跟命令  查看命令的作用  例如：whatis cp
+        wc：后跟文件路径   统计文件的行数、单词数、字节数  例如：wc /etc/passwd
+        hostname：查看或修改主机名
+        hostname  deng.example.com   只是临时生效，重启后不生效
+        vim  /etc/hostname     更改主机名永久生效
+           deng.example.com      自己定义   
+               【vim：文本编辑器    按i进行修改，改完之后按Esc，再按ZZ保存年并退出 】
+         重启后生效，当前不生效            
+        uname -a：查看内核版本
+                x86-64：64位操作系统
+                i386：32位操作系统
+                el7：企业级Linux操作系统，7.3  版本        
+                 3.10.0-514：  主版本号.次版本号.编译次数
+                           次版本号：奇数（测试版本）     偶数（稳定版本/发行版本）
+         who：查看当前有哪些用户在登陆该操作系统
+         whoami：查看当前shell登陆的用户
+         关机：halt   或者  init 0
+         重启：reboot  或者  init  6
+         ifconfig：查看IP地址
+         clear：清屏   ctrl+L
+         which：后根某个命令，查找命令的位置  which ls
+         whatis：后根某个命令，显示该命令的作用  whatis cp
+5、帮助命令
+    whatis
+    man
+    help
+    --help
+    info
+6、快捷键
+    （1）移动光标快捷键
+        ctrl+f  向前移动一个字符
+        ctrl+b  向后移动一个字符
+        alt+f ? 向前移动一个单词
+        alt+b ? 向后移动一个单词
+        ctrl+a? 移动到当前行首
+        ctrl+e  移动到当前行尾
+        ctrl+l  清屏，并在屏幕最上面开始一个新行
+    （2）编辑命令行快捷键
+??      Tab? ?? 命令或文件、目录自动补齐
+?       \?????? 换行
+        ctrl+d  删除当前的字符
+        ctrl+t  交换当前字符和前一个字符的位置
+        alt+t ? 交换当前单词和前一个单词的位置
+        alt+u ? 把当前单词变成大写
+        alt+l ? 把当前单词变成小写
+        alt+c ? 把当前单词变成首字母大写的单词
+        ctrl+v  添加一个特殊字符，例如，要添加一个制表符，按ctrl+v+tab
+    （3）剪切、粘贴快捷键
+        ctrl+k  剪切文本直到行的末尾
+        ctrl+u  剪切文本直到行的起始
+        ctrl+w  剪切光标前的单词
+        alt+d ? 剪切光标后的单词
+        ctrl+y  粘贴最近剪切的文本
+        alt+y ? 回退到先前剪切的文本并粘贴它
+        ctrl+c  删除整行
+    
