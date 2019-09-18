@@ -1,1 +1,80 @@
-{\rtf1}
+.php
+$weekday=iconv("gbk","utf-8",$weekday)   将$weekday转码
+
+
+
+<?php
+echo "输出语句";   #注释语句  无法注释?>
+?>
+//单行注释
+/*多行注释*/
+
+标量数据类型：
+boolean bool
+integer int
+string
+float double
+复合数据类型：
+array
+object
+特殊数据类型：
+resource         //资源
+null
+php预定义变量：p36
+
+变量使用前不用定义，只需赋值即可：$a=true;    //boolean变量
+引用赋值：$str2=&$str;     //str2的值会随str改变而改变
+
+浮点数的两种书写方法：
+3.1415926
+31.415926E-1
+
+检测数据类型：is_数据类型()：is_integer($a)   是则返回1
+
+输出语句：
+print "输出"                 //一次只能输出一个字符串
+echo "输出"                  //一次输出多个字符串，逗号隔开
+<?=   ?>   //只需要镶嵌一条php语句时
+
+自定义常量：（php内部预定义常量：p32）
+define(string constant_name,mixed value,case_sensitive=true)
+string constant_name:常量名
+mixed value：值
+case_sensitive=true：可选参数，true为大小写不敏感
+
+mixed constant(string constant_name):获取常量值
+bool defined(string constant_name):检测常量是否被定义
+
+字符链接运算符：.     .=
+++ --
+逻辑运算符：&&（and） ||(or)  xor(逻辑异或)  !         //英文字母优先级最低  符号优先级为4
+比较：> < >= <= == != ===(恒等：类型与值均等) !==
+条件运算符：   ? :
+
+
+数据类型转换：字符转化为数值类型时转化开头的数值，如果为字母则转化为0        
+             转化为字符串时false和null转化为“”
+             逻辑运算时 0 “” null “0” 空数组转化为false， 其余为true
+强制转换：
+1.（数据类型）变量
+2.使用val结尾的函数：intval() floatval() strval()
+3.bool settype(mixed var,string type);     //成功返回true 失败返回false
+
+流程控制：与C语言基本一致
+foreach(array_name as $value)
+
+数组：
+创建数组：
+$array[key]=value;
+$array[]=value;
+$array=array(key=>value,key2=>value)         //当省略key时自动从0开始生成索引，如果之前已有整数索引，则生成最大数+1，如果定义了相同的，则后一个                                              //覆盖前一个
+二维数组：
+array（
+key0=>array(key00=>value,key01=>value)
+key1=>array(key10=>value,key11=>value)
+）
+
+list() each() 遍历数组
+输出数组：
+print_r();
+foreach();
