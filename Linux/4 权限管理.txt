@@ -1,0 +1,139 @@
+一、UGO
+1、权限的表示方式
+    读       写       执行
+     r         w         x
+     4         2         1    
+    
+2、三种用户
+    所有者：u
+    所属组：g
+    其他用户：o
+    所有人：a
+
+3、查看文件或目录的权限
+    ls -l jisuan.sh
+       -rwxr-xr-x  1 root root   88 5月  21 10:03 jisuan.sh
+       rwx         r-x          r-x
+     所有者    所属组     其他用户
+
+4、设置权限
+（1）chown：更改文件的所有者和所属组
+        # chown deng:fan /tmp/aaa.txt
+        # chown :garden 3.txt
+        # chown   root  3.txt
+         -R 递归修改，修改目录的时候连带目录的所有子文件一起修改
+（2）chgrp：更改文件的所属组
+        # chgrp deng /tmp/aaa.txt 
+（3）chmod：更改文件的权限
+         # chmod u+w,g-w,o+w a.txt     使用字母方式更改权限
+         # chmod 755 /tmp/aaa.txt        使用数字方式更改权限
+         
+二、特殊权限：suid sgid sticky(t) 
+1、suid（u+s）
+        suid只能给文件（一般是命令文件）添加，当给命令文件添加了suid之后，后面再有人去执行这个命令的时候就会拥有命令操作符所有者的权限
+#chmod 4755 a.txt
+#chmod u+s a.txt
+例：默认普通用户无法在/下创建目录，通过给mkdir命令文件赋予u+s权限，普通用户可以在执行mkdir时拥有mkdir文件的所有者（root）的权限
+[root@ula /]# su - garden
+上一次登录：二 5月 23 13:11:37 CST 2017pts/0 上
+[garden@ula ~]$ mkdir /aaa
+mkdir: 无法创建目录"/aaa": 权限不够
+[garden@ula ~]$ exit
+登出
+[root@ula /]# which mkdir
+/usr/bin/mkdir
+[root@ula /]# chmod u+s /usr/bin/mkdir 
+[root@ula /]# su - garden
+上一次登录：二 5月 23 13:12:06 CST 2017pts/0 上
+[garden@ula ~]$ mkdir /aaa
+[garden@ula ~]$ ll -ld /aaa
+drwxrwxr-x 2 root garden 6 5月  23 13:13 /aaa
+
+2、sgid（g+s）
+        sgid只能给目录添加，当你给一个目录添加了sgid之后，后面不管谁来这个目录下创建文件，文件的所属组都会继承目录的所属组
+#chmod 2755 目录
+#chmod g+s 目录
+
+3、sticky(t权限)
+        t权限只能给目录添加，当你给一个目录添加了t权限之后，后面所有人在这个目录下不能删除其他人的文件
+#chmod 1777 目录
+#chmod o+t 目录
+
+说明：
+-R 递归修改权限	
+SUID：置于 u 的 x 位，原位置有执行权限，就置为 s，原来没有执行权限则为 S .
+SGID：置于 g 的 x 位，原位置有执行权限，就置为 s，原来没有执行权限则为 S .
+STICKY：粘滞位，置于 o 的 x 位，原位置有执行权限，就置为 t ，否则为T .
+
+三、umask 用户掩码
+控制用户创建文件和目录的默认权限
+用户 目录777 文件666
+		        755          644
+#umask
+0022 root账户默认
+0002 普通用户默认
+
+先把掩码做取反操作，然后在与原始权限做与运算
+或者
+按位减
+
+四、facl：扩展ugo权限，可以单独的对某一个用户或者某一组用户设置权限
+1、查看facl
+	#getfacl 文件(目录)名
+
+2、设置facl
+	#setfacl -m u:tom:r  a.txt
+	#setfacl -m u:tom:4  a.txt
+	#setfacl -m g:组名:rwx  a.txt
+	
+	-R 递归修改 必须写到-m的前面,可以写到一起
+	#setfacl -R -m u:tom:4  目录名称
+
+设置facl的继承权限
+    只能对目录，对目录本身不生效
+	# setfacl -m d:u:wing:r dir1
+
+mask:和权限做与运算，最后的结果是有效权限
+	# setfacl -m m::rw ccc.txt
+
+取消
+	# setfacl -b ccc.txt    删除所有ACL权限
+	# setfacl -x u:wing: ccc.txt
+
+五、文件属性chatter（隐藏权限）
+        用chattr命令防止系统中某个关键文件被修改
+        + ：在原有参数设定基础上，追加参数。
+        - ：在原有参数设定基础上，移除参数。
+        = ：更新为指定参数设定。
+        A：文件或目录的 atime (access time)不可被修改(modified), 可以有效预防例如手提电脑磁盘I/O错误的发生。
+        S：硬盘I/O同步选项，功能类似sync。
+        a：即append，设定该参数后，只能向文件中添加数据，而不能删除，多用于服务器日志文件安全，只有root才能设定这个属性。
+        c：即compresse，设定文件是否经压缩后再存储。读取时需要经过自动解压操作。
+        d：即no dump，设定文件不能成为dump程序的备份目标。
+        i：设定文件不能被删除、改名、设定链接关系，同时不能写入或新增内容。i参数对于文件 系统的安全设置有很大帮助。
+        j：即journal，设定此参数使得当通过mount参数：data=ordered 或者 data=writeback 挂 载的文件系统，文件在写入时会先被记录(在journal中)。如果filesystem被设定参数为 data=journal，则该参数自动失效。
+        s：保密性地删除文件或目录，即硬盘空间被全部收回。
+        [root@ezsvs tmp]# chattr +i /etc/resolv.conf      【不能被删除和修改】
+        [root@ezsvs tmp]# chattr +a /var/log/messages   【不能删除，只能追加内容】
+        # lsattr a.txt  查看隐藏权限
+
+
+————————————————————————————————————————————
+
+  纯手动创建账户过程
+  创建jim账户
+1.在passwd文件添加一个行jim账户信息
+  在shadow文件添加一个行jim账户信息
+2.创建家目录
+  #cp -r /etc/skel  /home/jim
+3.在group文件添加一行jim组信息
+  在gshadow文件添加一行jim组信息 
+4.修改权限
+  #chown jim.jim /home/jim
+  #chmod 700 /home/jim
+5.创建个人邮箱
+  #mkdir /var/spool/mail/jim
+  #chown jim.mail /var/spool/mail/jim
+  #chmod 660 /var/spool/mail/jim
+  
+/etc/login.defs     
