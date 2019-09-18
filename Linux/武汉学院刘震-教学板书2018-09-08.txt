@@ -1,0 +1,2488 @@
+【1 系统安装】：
+
+修改系统时间。
+        linux系统时钟有两个，一个是硬件时钟，即BIOS时间，就是我们进行CMOS设置时看到的时间，另一个是系统时钟，是linux系统Kernel时间。当Linux启动时，系统Kernel会去读取硬件时钟的设置，然后系统时钟就会独立于硬件运作。有时我们会发现系统时钟和硬件时钟不一致，因此需要执行时间同步，下面就分享一下时间设置及时钟同步的命令使用方法。
+
+实验一：
+
+【date命令将日期设置为2014年6月18日】
+ ----   #date -s 06/18/14
+【将时间设置为14点20分50秒】
+ ----   #date -s 08:43:50
+【将时间设置为2014年6月18日14点16分30秒（MMDDhhmmYYYY.ss）】
+#date 0618141614.30
+
+
+
+
+
+【linux系统修改系统时间与时区】
+ hwclock/clock 命令查看、设置硬件时间
+【查看系统硬件时钟】
+hwclock  --show 或者
+clock  --show
+
+
+【设置硬件时间】
+
+#hwclock --set --date="06/18/14 14:55" （月/日/年时:分:秒）或者
+#clock --set --date="06/18/14 14:55" （月/日/年时:分:秒）
+
+
+【硬件时钟与系统时钟同步】
+# hwclock --hctosys 或者 # clock --hctosys  
+
+hc代表硬件时间，sys代表系统时间，即用硬件时钟同步系统时钟
+【系统时钟和硬件时钟同步】
+# hwclock --systohc或者# clock --systohc  
+即用系统时钟同步硬件时钟
+
+
+
+
+
+
+实验二：
+#cp /etc/inittab .将系统启动配置文件复制一份到当前/root中
+
+#vi /etc/inittab
+将默认启动级别5修改成3
+
+按Esc键，输入:wq    保存并退出
+
+#init 6    重新启动查看 是否生效！
+
+
+
+
+
+
+Linux系统目录结构
+倒置树型结构
+/   通常称为根分区。所有的文件和目录皆由此开始。只有root用户对此目录拥有写权限。
+---/etc  配置文件  包含所有应用程序的配置文件，也包含启动、关闭某个特定程序的脚本，例如，
+      /etc/passwd，/etc/init.d/network等。
+
+---/boot 存放Linux系统启动时需要加载的文件。 (一般在另外一个磁盘分区里面保存) Kernel、grub等文件都存放在此。
+
+---/home  普通用户所有数据存放在这个目录下 UID   GID  500 
+
+---/var  是一个可增长的目录，包含很经常变的文件。例如，/var/log（系统日志）、/var/lib （包文件） 、
+
+---/root  管理员所有数据。  root用户的家目录    UID   GID 0-499
+
+---/tmp  临时文件存储位置
+
+---/usr  usr表示的是unix software source
+
+---/bin  命令  此目录包含二进制可执行文件。
+---/sbin  系统命令 ，此目录中的命令主要供系统管理员使用，以进行系统维护。例如，iptables、reboot、fdisk等。
+
+---/mnt - 挂载目录  挂载点，系统管理员可用于临时挂载文件系统。
+
+---/dev  包含设备文件。在Linux中，一切都被看做文件。终端设备、USB、磁盘等等都被看做文件，如/dev/sda。
+
+
+Linux 7个启动级别：
+0 系统停机模式，系统默认运行级别不能设置为0，否则不能正常启动，机器关闭。
+1 单用户模式，root权限，用于系统维护，禁止远程登陆，就像Windows下的安全模式登录。
+2 多用户模式，没有NFS网络支持。
+3 完整的多用户文本模式，有NFS，登陆后进入控制台命令行模式。
+4 系统未使用，保留一般不用，在一些特殊情况下可以用它来做一些事情。例如在笔记本电脑的电池用尽时，可以切换到这个模式来做一些设置。
+5 图形化模式，登陆后进入图形GUI模式，X Window系统。
+6 重启模式，默认运行级别不能设为6，否则不能正常启动。运行init 6机器就会重启。
+
+#init 3   #init 5  #init 6  #init 0
+
+
+
+
+
+终端介绍
+1、命令的使用方式
+        命令   [选项]   [参数]   [操作对象]
+2、命令选项
+        长选项：--     例如：--help
+        短选项：-      例如：-a   -b
+3、内部命令和外部命令
+        内部命令：内核本身存在   cd等
+        外部命令：以二进制文件格式存在的命令   mkdir等
+        区分：type   命令 
+                输出结果显示：shell内嵌则为内部命令
+                                        有路径存在则为外部命令
+
+4、基础命令
+        date：查看时间
+            
+        cal：查看日历
+        bc：计算器
+        whatis：后跟命令  查看命令的作用  例如：whatis cp
+        wc：后跟文件路径   统计文件的行数、单词数、字节数  例如：wc /etc/passwd
+        hostname：查看或修改主机名
+        hostname  deng.example.com   只是临时生效，重启后不生效
+        vim  /etc/hostname     更改主机名永久生效
+           deng.example.com      自己定义   
+               【vim：文本编辑器    按i进行修改，改完之后按Esc，再按ZZ保存年并退出 】
+         重启后生效，当前不生效            
+        uname -a：查看内核版本
+                x86-64：64位操作系统
+                i386：32位操作系统
+                el7：企业级Linux操作系统，7.3  版本        
+                 3.10.0-514：  主版本号.次版本号.编译次数
+                           次版本号：奇数（测试版本）     偶数（稳定版本/发行版本）
+         who：查看当前有哪些用户在登陆该操作系统
+         whoami：查看当前shell登陆的用户
+         关机：halt   或者  init 0   或 shutdown -h now
+         重启：reboot  或者  init  6 或 shutdwon -r now
+         ifconfig：查看IP地址
+         clear：清屏   ctrl+L
+         which：后根某个命令，查找命令的位置  which ls
+         whatis：后根某个命令，显示该命令的作用  whatis cp
+5、帮助命令
+    whatis
+    man
+    help
+    --help
+    info
+6、快捷键
+    （1）移动光标快捷键
+        ctrl+f  向前移动一个字符
+        ctrl+b  向后移动一个字符
+        alt+f ? 向前移动一个单词
+        alt+b ? 向后移动一个单词
+        ctrl+a? 移动到当前行首
+        ctrl+e  移动到当前行尾
+        ctrl+l  清屏，并在屏幕最上面开始一个新行
+    （2）编辑命令行快捷键
+??      Tab? ?? 命令或文件、目录自动补齐
+?       \?????? 换行
+        ctrl+d  删除当前的字符
+        ctrl+t  交换当前字符和前一个字符的位置
+        alt+t ? 交换当前单词和前一个单词的位置
+        alt+u ? 把当前单词变成大写
+        alt+l ? 把当前单词变成小写
+        alt+c ? 把当前单词变成首字母大写的单词
+        ctrl+v  添加一个特殊字符，例如，要添加一个制表符，按ctrl+v+tab
+    （3）剪切、粘贴快捷键
+        ctrl+k  剪切文本直到行的末尾
+        ctrl+u  剪切文本直到行的起始
+        ctrl+w  剪切光标前的单词
+        alt+d ? 剪切光标后的单词
+        ctrl+y  粘贴最近剪切的文本
+        alt+y ? 回退到先前剪切的文本并粘贴它
+        ctrl+c  删除整行
+
+============================================================================================
+
+
+【2 文件管理】
+
+
+一、FHS
+    文件系统层次化标准
+    
+        /bin: 存放的是系统的命令
+
+        /sbin：存放的是管理命令
+
+        /boot：存放的是系统的启动文件及内核
+
+        /dev: 设备文件主目录
+
+        /etc：系统主配置文件主目录
+
+        /home：普通用户的家目录，每一个用户的家目录通常默认为/home/USERNAME
+
+        /root：超级管理员的家目录
+
+        /lib：系统库文件主目录
+
+        /media：挂载点目录，移动设备
+
+        /mnt：挂载点目录，额外的临时文件系统
+
+        /opt：可选目录，第三方程序的安装目录
+
+        /proc：系统进程主目录
+
+        /sys：伪文件系统，跟硬件设备相关的属性映射文件
+
+        /tmp：临时文件, /var/tmp
+
+        /var：系统配置文件主目录
+
+        /usr：系统大文件及说明文档存放目录
+        
+二、文件类型区分 
+    普通文件   黑色  -   f
+    目录文件   蓝色  d
+    设备文件   黄色   b   不能直接使用，必须挂载（mount）
+    安装文件   红色   
+    链接文件   亮蓝色   l
+    可执行文件  绿色    ./
+
+三、文件命名规则
+        一切皆文件
+        没有后缀名之说       .rpm   .tar.gz   这些都不是后缀名，只是为了说明用法
+        一切从根/开始 
+        文件和目录在同一个路径下不能重名
+        不能使用/符号   因为/代表路径
+        以.符号开头的文件名为隐藏文件
+        尽量避免使用特殊符号，比如""   *   %  $ #；不要使用空格
+        严格区分大小写
+
+四、目录管理命令
+1、ls   查看目录下的所有文件及其目录
+        ls  路径     
+        -l   查看当前目录下的所有文件及目录的详细信息    = ll
+            -               rw-r--r--    1                root root        0        4月  26 16:24 1
+            普通文件     权限       被链接的次数 所有者 所属组    大小   时间
+        -a   查看含隐藏文件在内的所有文件
+        -d   查看当前目录本身的属性
+2、pwd    查看当前工作目录的绝对路径
+      绝对路径：从/开始
+      相对路径：从当前工作目录开始
+3、cd   切换目录
+    cd /tmp/11
+    .    当前目录   
+    ..   上一级目录
+    -    切换到上一次状态的工作目录
+6、mkdir    创建目录
+     mkdir aaa
+     -p：递归创建目录    mkdir -p /tmp/aaa/bbb/ccc
+
+
+7、rmdir   删除空目录   无法删除非空目录     
+
+
+常用命令：
+
+8、访问命令：cd    cd ..返回到上一级目录   cd ~返回到家目录    cd /返回到根目录
+
+9、查看命令：ls ls -a    ll    cat    more     less  b向上查看  q退出查看   enter回车键查看下一行   空格键查看下一页   
+
+head 查看文件头    head -? 文件名   head -5 /etc/passwd 查看/etc/passwd文件的前5行     
+tail 查看文件结尾  tail -? 文件名   tail -5 /etc/passwd 查看/etc/passwd文件的末5行
+
+
+10、清除当前屏幕内容：clear
+
+
+
+12、创建目录命令：mkdir     mkdir -p创建多级目录  空
+
+mkdir 123 456 789创建多个平行目录            mkdir -p 123/456
+
+
+13、删除目录命令：rmdir  rmdir liuzhen   rmdir -p删除多级目录  空
+
+
+rmdir 1 2 3 删除多个平行目录            rmdir -p 1/2/3
+
+rm 删除当前路径下文件 -rf 不提示强制删除
+
+创建/home/123/456/789
+删除/home/123/456/789     逐级删除
+
+创建/home/123/456/789
+删除/home/123/456/789     直接删除
+
+
+未修改前：
+ctrl+alt+f1 图像模式
+ctrl=alt=f2 终端模式
+
+修改以后：vim /etc/inittab 将5=>3  esc  :wq  reboot(shutdown -r now       init 6)
+
+开机进入终端模式
+
+init 5进入图像模式 
+
+ctrl+alt+f1 终端模式
+ctrl=alt=f2 终端模式
+...      f6 终端模式
+
+ctrl=alt=f7 图像模式切换
+
+
+
+
+设置解译器位置
+
+/bin  包含系统管理员命令   /bin/bash可登录终端模式
+
+/sbin 包含一般管理员命令   /sbin/nologin不可登录终端模式
+
+
+
+登录用户密码修改重置！！！
+e修改启动选项，e选择第二项内核，设置为 空格+single 回车确认后，返回上一级内核项，按b加载启动
+
+echo '新密码' | passwd --stdin 用户名    例如echo '88888888' | passwd --stdin root
+
+启动完成后在提示符
+sh-4.1#passwd    修改root用户密码！修改一次，确认一次，
+sh-4.1#init 6    重启生效！
+
+
+ 
+
+五、文件管理
+1、创建空文件：touch
+     touch 1
+     vim 2.txt    必须在文件中加入内容才能创建成功ing
+     touch：创建空文件；
+     如果文件已存在，再使用touch代表修改文件的时间戳
+     查看时间戳：stat 1  （1是文件的名称）
+     时间戳：
+        访问时间：只是查看，并没有做任何修改
+        属性修改时间：权限修改、所有者和所属组的修改
+        文件内容修改时间： 
+2、file   查看文件类型
+3、cp  复制
+    cp /etc/passwd .       cp  源文件   指定路径     【.代表当前目录】
+    cp /etc/passwd /tmp/
+    cp /tmp/aaa /home/  -R   复制目录
+4、rm  删除文件或目录
+    rm -rf 1        r代表删除目录   f代表强制删除（不提示删除）
+5、mv  移动或重命名
+    mv 2.txt /tmp/3.txt
+6、ln：链接命令
+    硬链接：复制并同步    ln /etc/passwd  /tmp/password
+    软链接：类似windows下的快捷方式      ln  -s  /etc/passwd /tmp/password
+    软链接和硬链接的区别
+        1.创建命令不同
+        ln -s /root/ruan.txt /root/桌面/          ln /root/ying.txt /root/桌面/
+        2.软链接创建时必须使用绝对路径(链接和源文件在同一目录下,可以相对路径)
+          硬链接创建时可以绝对路径也可相对路径
+        3.软链接的源文件不可以剪切,重命名,删除
+          硬链接的源文件可以剪切,重命名,删除
+        4.软链接的链接文件权限永远是777，即使将链接文件的权限进行了修改，也不会发生变化，变得是源文件的权限
+          硬链接的链接文件权限永远和源文件相同
+        5.软链接的链接文件的inode号和源文件不同
+          硬链接的链接文件的inode号和源文件相同
+        6.软连接可以对目录操作
+          硬链接不支持对目录操作，是针对于上层来说，底层是可以针对于目录做硬链接的，通过代码就可以实现
+        7.软连接可以跨文件系统
+          硬链接不可以跨文件系统，因为硬链接是存放在源文件的同一个block上面的
+          
+六、文件内容操作命令
+查看文件：cat、less、more、head、tail
+1、cat：查看文件的所有内容
+        cat  /tmp/1.txt
+2、less和more：分页查看文件内容
+3、head：查看文件前十行      head -3 passwd
+4、tail：查看文件后十行       tail -3 passwd
+
+七、VIM编辑器
+
+        
+    
+    
+    
+    编辑器使用
+        vi vim gedit  emacs nano office(openoffice 永中office)
+        
+        vim 
+        #vim   文件名
+        
+        三种模式
+        命令模式   
+            只能使用快捷键
+            如何进入编辑模式：a    i    o   r   A   I    O   R
+                            必须会的:a或i    o
+             
+            从编辑模式进入命令模式:ESC
+            光标定位：
+            control+command+左右键 （只限于apple虚拟机内的vim） 光标移动到行首和行尾
+            control+windows+左右键 或者 shift+左右键 光标移动到行首和行尾
+            gg            定位到开头
+            G             定位到结尾
+            dd            删除(剪切)当前光标所在行
+            数字+dd  删除多行
+            p              粘贴
+            u              undo撤销
+            ctrl+r       回滚
+            yy            复制当前光标所在行
+            数字+yy  复制多行
+            V              可视行模式
+                             y 复制
+                             d 删除
+                             p  粘贴
+            ctrl+v        可视块模式
+                             添加注释：
+                                 选择需要添加注释行的第一列字符-->I -->写注释符-->ESC两次
+            v               可视化模式                  
+            v               取消可视模式
+            D              删除当前光标以后的内容
+            d^             删除当前光标之前的内容
+            编辑模式ctrl+u   删除当前光标之前的内容 
+            P               粘贴当前光标所在行上一行
+                             
+        编辑模式
+             编辑内容
+        尾行模式
+             设置vim的功能   查找   替换
+             查找
+             /关键字   n   N
+             :set nu        显示行号
+             :set nonu     取消行号
+             :set ic         不区分大小写
+             :set noic      取消不区分大小写
+             :set ts=4     设置tab键长度
+             :set sw=4   设置自动缩进的tab键长度
+             
+             加密             
+             :X             
+
+             解密             
+             :set key=
+
+             替换
+             s
+             :s/world/nice/       替换当前光标所在行
+             :%s/world/nice/    %表示替换所有行   
+             :%s/world/nice/g  替换行内所有关键字
+             :3s/world/nice/     替换指定行
+             :3,10s/world/nice/ 第3行到第10行
+             :3,4s/^/#/
+             
+             :w       保存
+             :q        退出
+             :wq     保存退出
+             :x        保存退出
+             :wq!    强制保存退出  (适用于只读文件)
+             
+             :r   /etc/passwd   读入另一个文件的内容
+             :w  /root/Desktop/abc    另存为
+             
+             :sp     文件名
+             :vsp   文件名
+             ctrl+w  窗口之间互相切换
+             
+             shift+zz  命令行模式直接保存退出
+       
+       使vim设置永久生效：
+       #vim   /etc/vimrc   把设置写到这个文件的最后，对所有账户生效
+       set nu
+       set ic
+       set ts=4
+       set sw=4
+       
+       #vim  /root/.vimrc    也可以把设置写到此文件，只对root生效
+
+
+
+=============================================================================================
+
+【3 用户管理】
+
+一、UID、GID
+        超级用户root:UID为0，对本主机拥有所有权限
+        程序用户:UID为201-999， 一般不允许登录到系统，仅用于维持系统或程序的正常运行
+        普通用户:UID为1000~60000）：一般只有在用户自己的宿主目录中有完全权限
+        /etc/login.defs   可以查看用户UID分类和文件目录的权限定义
+        
+二、用户管理
+（1）useradd:创建用户
+       #useradd  user1      
+       #useradd -c boss -d /home -u 2017 -g root -G root -s /sbin/nologin fan
+                -c：描述
+                -d：指定家目录
+                -u：指定UID
+                -g：所属组
+                -G：附加组
+                -s：指定登录的shell（/bin/bash或者/sbin/nologin）
+（2）userdel：删除用户
+       #userdel -r fan    (-r：删除用户所有信息；不带参数-r则/home/和/var/spool/mail/这两个地方不会被删除)
+（3）usermod：修改用户属性
+         #usermod -G deng -u 1002 fan
+         	锁定帐号：-L
+	        解锁帐号：-U
+（4）passwd：设置密码
+        给当前账户设置密码(所有人可以用,但是普通账户不能给自己设置初始密码)
+          passwd 用户名称  只使用于root账户
+          #passwd user1
+    锁定密码
+	        #passwd -l 账户名称
+	        # passwd -l user10
+	        锁定用户 user10 的密码 。
+	        passwd: 操作成功
+    解锁密码
+	     #passwd -u 账户名称
+	     # passwd -u user10
+	      解锁用户 user10 的密码 。
+	      passwd: 操作成功
+
+    查看密码状态
+	   #passwd -S 账户名称
+	   # passwd -S user10
+	   user10 PS 2013-11-21 0 99999 7 -1 (密码已设置，使用 SHA512 加密。)
+	   # passwd -S user10
+	   user10 LK 2013-11-21 0 99999 7 -1 (密码已被锁定。)
+	
+（5）chage
+                来修改帐号和密码的有效期限。常见选项如下：
+                -m：密码可更改的最小天数。为零时代表任何时候都可以更改密码；
+                -M：密码保持有效的最大天数；
+                -w：用户密码到期前，提前收到警告信息的天数； 
+                -E：帐号到期的日期。过了这天，此帐号将不可用； 
+                -d：上一次更改的日期；
+                -i：停滞时期。如果一个密码已过期这些天，那么此帐号将不可用； 
+                -l：例出当前的设置。由非特权用户来确定他们的密码或帐号何时过期。
+                例：设置garden用户密码老化时间为0。
+                  #chage -d 0 garden
+
+（6）su：切换用户
+        #su - user1
+
+（7）id：查看用户信息
+        #id user1
+        
+（8）whoami：查看当前登录的用户
+
+（9）exit：退出交互式shell
+
+三、组管理
+（1）创建组
+		#groupadd 组名
+		#groupadd -g gid 组名
+		#groupadd -g gid -o 组名
+        -g：代表GID
+        
+（2）查看组
+		#cat /etc/group
+		组名:代表组密码:gid:组员
+	
+（3）查看一个用户的所属组
+		#groups 用户名称
+
+（4）groupmod ：修改组
+         
+（5）gpasswd：给组设置密码
+        #gpasswd garden
+        
+（6）给组添加账户
+        #gpasswd -a user1 garden
+        正在将用户“user1”加入到“garden”组中
+
+（7）从组删除账户
+        #gpasswd -d user1 garden
+        正在将用户“user1”从“garden”组中删除
+
+（8）指定garden组的管理员为user1
+        # gpasswd -A user1 garden
+	
+（8）groupdel：删除组
+        
+四、用户组配置文件介绍
+（1）用户信息配置文件：/etc/passwd
+            user2:x:1002:1002::/bbb/:/bin/bash
+            用户名:口令:用户标识号:组标识号:注释性描述:主目录:登录Shell
+（2） 密码配置文件：/etc/shadow
+            name:!!:13675:0:99999:7:::   
+            字段 1 定义与这个 shadow 条目相关联的特殊用户帐户。 
+            字段 2 包含一个加密的密码。 
+            字段 3 自 1/1/1970 起，密码被修改的天数 
+            字段 4 密码将被允许修改之前的天数（0 表示“可在任何时间修改”） 
+            字段 5 系统将强制用户修改为新密码之前的天数（1 表示“永远都不能修改”） 
+            字段 6 密码过期之前，用户将被警告过期的天数（-1 表示“没有警告”） 
+            字段 7 密码过期之后，系统自动禁用帐户的天数（-1 表示“永远不会禁用”） 
+            字段 8 该帐户被禁用的天数（-1 表示“该帐户被启用”） 
+            字段 9 保留供将来使用
+（3）组配置文件：/etc/group
+            组名:口令:组标识号:组内用户列表
+（4）组密码文件：/etc/gshadow
+            组名:密码:组管理员:组员
+（5）用户的家目录：/home
+（6）用户邮件目录：/var/spool/mail 
+
+
+UID用户标识符，为数字      
+GID组标识符，为数字        
+root:UID:0    系统用户0-499共计500个用户     
+普通用户UID：500起
+
+用户账户文件：
+/etc/passwd文件：用户用户信息文件    任何用户均可以查看
+/etc/shadow文件：用户加密口令文件    只有root用户可以查看
+
+组群文件：
+/etc/group文件：组群用户信息文件      任何账户均可查看
+/etc/gshadow文件：组群口令管理信息    只root账户可查看
+
+
+/etc/login.defs文件：默认用户信息，日志
+
+
+/root
+#mkdir etc-bak    
+#cp /etc/passwd etc-bak 
+#cp /etc/shadow etc-bak
+..
+
+#ls etc-bak
+
+【有五个备份文件(带命令的截图)】
+
+
+
+
+
+
+
+用户账户七个域：
+用户名称：加密密码：UID：GID：描述信息：主目录：命令解释器（权限）
+root:x:0:0:root:/root:/bin/bash
+ceshi:x:499:499:ceshi:/root/ceshi:/sbin/nologin
+
+test:x:505:505:test:/home/test:/bin/bash
+
+
+liuzhen:x:500:500:liuzhen:/home/liuzhen:/bin/bash
+
+用户组群四个域：
+组群名：组群口令：GID：组群成员列表
+root:x:0:root,liuzhen,class,teacher
+
+
+组文件：
+组群名：组群：GID：成员列表（,）
+
+
+
+【新建用户：useradd】
+
+useradd 自己的姓名全拼
+
+useradd -u 504 -g 504 -d /home/user1 -s /bin/bash -p 12345678 user1
+
+【修改用户：usermod】
+
+usermod -d /home/user2 -s /sbin/nologin -c liuzhen liuzhen
+
+【禁用用户：passwd -l liuzhen     usermod -L liuzhen】
+【恢复用户：passwd -u liuzhen     usermod -U liuzhen】
+
+在/etc/passwd   /etc/shadow文件的账户信息前面加上！   *
+
+
+
+【删除用户：userdel】
+userdel liuzhen删除liuzhen这个账户信息
+
+
+添加用户命令及选项：
+-c comment      用户的注释性信息
+-d home_dir     指定用户的主目录
+-e expire_date 禁用帐号的日期，格式为：YYYY-MM-DD
+-f inactive_days 设置帐户过期多少天后，用户帐户被禁用。
+-u  UID               指定用户的UID
+-g initial_group   用户所属主组群的组群名称或者GID
+-G group-list       用户所属的附属组群列表
+-m             若用户主目录不存在则创建它
+-M             不要创建用户主目录
+-n              不要为用户创建用户私人组群
+-p              passwd  加密的口令
+-r              创建UID小于500的不带主目录的系统帐号
+-s  shell   指定用户的登录Shell，默认为/bin/bash
+
+
+【作业一：】
+
+
+题目：新建用户为自己的姓名名称（全拼），UID为600，指定其所属的私有组为guest（guest组的标识符为600），用户的主目录为/home/姓名名称全拼，用户的Shell为/bin/bash，用户的密码为12345678，帐户永不过期。
+
+
+【用户切换命令：su 姓名名称全拼    user1为用户名称】
+
+
+【设置用户口令：passwd username   给username设置口令】
+
+
+passwd命令参数：
+
+-l      锁定（停用）用户帐户
+-u    口令解锁
+-d    将用户口令设置为空，这与未设置口令的帐户不同。未设置口令的帐户无法登录系统，而口令为空的帐户可以。
+-f      强迫用户下次登录时必须修改口令
+-n     指定口令的最短存活期
+-x     指定口令的最长存活期
+-w     口令要到期前提前警告的天数
+-I      口令过期后多少天停用帐户
+-S     显示帐户口令的简短状态信息
+
+
+【新建组群：groupadd】
+#groupadd guest新建一个来宾账户
+
+【修改组群：groupmod】
+#groupmod guest 
+
+-g 修改GID
+-n 修改组群名称    groupmod -n liuzhen ceshi
+
+
+【删除组群：groupdel】
+#groupdel ceshi
+
+
+【为组群添加用户：gpasswd】
+
+gpasswd命令的选项： 
+      -a  把用户加入组
+      -d  把用户从组中删除
+      -r   取消组的密码
+      -A  给组指派管理员
+
+
+【作业二：】
+
+新建组群class，把自己姓名全拼的用户加入class组，并指派自己为管理员。
+
+
+补充：
+一、账户管理
+1、   ID查看当前登录账户的信息
+
+   #id
+   #id -g查看用户组GID   -G查看附属组    -u查看UID
+
+#newgrp  转换用户到相关组   默认转换为root组
+
+#pwconv同步化命令
+
+二、【批量添加用户】：
+  #vi user.txt
+     c1:x:511:511:c1:/home/c1:/bin/bash
+     ..c1-c5
+     保存并退出：wq
+  #vi passwd.txt
+     c1:123123
+     ..c1-c5
+     保存并退出：wq
+
+  #newusers < user.txt 批量配置添加用户，按指定配置文件
+  #pwunconv不加密密码不生效
+  #tail -10 /etc/passwd   查看批量用户 
+
+ #chpasswd < passwd.txt批量配置添加用户的密码（明文）
+ #tail -10 /etc/shadow   查看批量用户的密码
+  #pwconv将加密密码并生效
+
+
+
+
+ #tail -10 /etc/passwd   查看批量用户
+ #tail -10 /etc/shadow   查看批量用户的密码
+
+ #su c1
+ #whoami
+
+
+====================================================================================================
+
+【4 权限管理】
+
+
+一、UGO
+1、权限的表示方式
+    读       写       执行
+     r         w         x
+     4         2         1    
+    
+2、三种用户
+    所有者：u
+    所属组：g
+    其他用户：o
+    所有人：a
+
+3、查看文件或目录的权限
+    ls -l jisuan.sh
+       -rwxr-xr-x  1 root root   88 5月  21 10:03 jisuan.sh
+       rwx         r-x          r-x
+     所有者    所属组     其他用户
+
+4、设置权限
+（1）chown：更改文件的所有者和所属组
+        # chown deng:fan /tmp/aaa.txt
+        # chown :garden 3.txt
+        # chown   root  3.txt
+         -R 递归修改，修改目录的时候连带目录的所有子文件一起修改
+（2）chgrp：更改文件的所属组
+        # chgrp deng /tmp/aaa.txt 
+（3）chmod：更改文件的权限
+         # chmod u+w,g-w,o+w a.txt     使用字母方式更改权限
+         # chmod 755 /tmp/aaa.txt        使用数字方式更改权限
+         
+二、特殊权限：suid sgid sticky(t) 
+1、suid（u+s）
+        suid只能给文件（一般是命令文件）添加，当给命令文件添加了suid之后，后面再有人去执行这个命令的时候就会拥有命令操作符所有者的权限
+#chmod 4755 a.txt
+#chmod u+s a.txt
+例：默认普通用户无法在/下创建目录，通过给mkdir命令文件赋予u+s权限，普通用户可以在执行mkdir时拥有mkdir文件的所有者（root）的权限
+[root@ula /]# su - garden
+上一次登录：二 5月 23 13:11:37 CST 2017pts/0 上
+[garden@ula ~]$ mkdir /aaa
+mkdir: 无法创建目录"/aaa": 权限不够
+[garden@ula ~]$ exit
+登出
+[root@ula /]# which mkdir
+/usr/bin/mkdir
+[root@ula /]# chmod u+s /usr/bin/mkdir 
+[root@ula /]# su - garden
+上一次登录：二 5月 23 13:12:06 CST 2017pts/0 上
+[garden@ula ~]$ mkdir /aaa
+[garden@ula ~]$ ll -ld /aaa
+drwxrwxr-x 2 root garden 6 5月  23 13:13 /aaa
+
+2、sgid（g+s）
+        sgid只能给目录添加，当你给一个目录添加了sgid之后，后面不管谁来这个目录下创建文件，文件的所属组都会继承目录的所属组
+#chmod 2755 目录
+#chmod g+s 目录
+
+3、sticky(t权限)
+        t权限只能给目录添加，当你给一个目录添加了t权限之后，后面所有人在这个目录下不能删除其他人的文件
+#chmod 1777 目录
+#chmod o+t 目录
+
+说明：
+-R 递归修改权限	
+SUID：置于 u 的 x 位，原位置有执行权限，就置为 s，原来没有执行权限则为 S .
+SGID：置于 g 的 x 位，原位置有执行权限，就置为 s，原来没有执行权限则为 S .
+STICKY：粘滞位，置于 o 的 x 位，原位置有执行权限，就置为 t ，否则为T .
+
+三、umask 用户掩码
+控制用户创建文件和目录的默认权限
+用户 目录777 文件666
+		        755          644
+#umask
+0022 root账户默认
+0002 普通用户默认
+
+先把掩码做取反操作，然后在与原始权限做与运算
+或者
+按位减
+
+四、facl：扩展ugo权限，可以单独的对某一个用户或者某一组用户设置权限
+1、查看facl
+	#getfacl 文件(目录)名
+
+2、设置facl
+	#setfacl -m u:tom:r  a.txt
+	#setfacl -m u:tom:4  a.txt
+	#setfacl -m g:组名:rwx  a.txt
+	
+	-R 递归修改 必须写到-m的前面,可以写到一起
+	#setfacl -R -m u:tom:4  目录名称
+
+设置facl的继承权限
+    只能对目录，对目录本身不生效
+	# setfacl -m d:u:wing:r dir1
+
+mask:和权限做与运算，最后的结果是有效权限
+	# setfacl -m m::rw ccc.txt
+
+取消
+	# setfacl -b ccc.txt    删除所有ACL权限
+	# setfacl -x u:wing: ccc.txt
+
+五、文件属性chatter（隐藏权限）
+        用chattr命令防止系统中某个关键文件被修改
+        + ：在原有参数设定基础上，追加参数。
+        - ：在原有参数设定基础上，移除参数。
+        = ：更新为指定参数设定。
+        A：文件或目录的 atime (access time)不可被修改(modified), 可以有效预防例如手提电脑磁盘I/O错误的发生。
+        S：硬盘I/O同步选项，功能类似sync。
+        a：即append，设定该参数后，只能向文件中添加数据，而不能删除，多用于服务器日志文件安全，只有root才能设定这个属性。
+        c：即compresse，设定文件是否经压缩后再存储。读取时需要经过自动解压操作。
+        d：即no dump，设定文件不能成为dump程序的备份目标。
+        i：设定文件不能被删除、改名、设定链接关系，同时不能写入或新增内容。i参数对于文件 系统的安全设置有很大帮助。
+        j：即journal，设定此参数使得当通过mount参数：data=ordered 或者 data=writeback 挂 载的文件系统，文件在写入时会先被记录(在journal中)。如果filesystem被设定参数为 data=journal，则该参数自动失效。
+        s：保密性地删除文件或目录，即硬盘空间被全部收回。
+        [root@ezsvs tmp]# chattr +i /etc/resolv.conf      【不能被删除和修改】
+        [root@ezsvs tmp]# chattr +a /var/log/messages   【不能删除，只能追加内容】
+        # lsattr a.txt  查看隐藏权限
+
+
+————————————————————————————————————————————
+
+  纯手动创建账户过程
+  创建jim账户
+1.在passwd文件添加一个行jim账户信息
+  在shadow文件添加一个行jim账户信息
+2.创建家目录
+  #cp -r /etc/skel  /home/jim
+3.在group文件添加一行jim组信息
+  在gshadow文件添加一行jim组信息 
+4.修改权限
+  #chown jim.jim /home/jim
+  #chmod 700 /home/jim
+5.创建个人邮箱
+  #mkdir /var/spool/mail/jim
+  #chown jim.mail /var/spool/mail/jim
+  #chmod 660 /var/spool/mail/jim
+  
+/etc/login.defs     
+
+
+
+-----------------------------------------------------------------------------------------
+
+三、文件系统：
+1、普通文件：
+2、目录文件：
+3、设备文件：b  c  s  p
+
+
+d 目录文件
+- 普通文件
+l 链接文件
+
+r（Read，读取）：4
+w（Write，写入）：2
+x（execute，执行）：1
+-：表示不具有该项权限：0
+
+
+
+
+?  u：user，表示属主。      234
+?  g：group，表示属组。     567
+?  o：others，表示其它用户。8910
+?  a：all，表示以上三种用户。
+
+
+操作符号包括以下几种。
+?  ＋：添加某种权限。
+?  -：减去某种权限。
+?  ＝：赋予给定权限并取消原来的权限。
+
+
+【chmod添加删除权限命令】
+
+格式：chmod [u g o a..] [+ - =] [rwx…] 文件名
+    + :　表示增加权限
+　 - :    表示删除权限
+    = :    表示分配权限，同时将原有权限删除
+
+【文字表示法】
+[root@host root]# chmod   g+x  test
+ 给同组用户分配执行权限
+
+ [root@host root]# chmod   o-rx  test
+给其他用户删除读和执行权限
+
+[root@host root]# chmod   u+rwx,g+rwx,o+rwx  test
+给所属主、同组和其他用户分配读、写和执行权限
+
+[root@host root]# chmod   u-rx,g-rx  test
+删除属主、同组的读和执行权限
+
+[root@host root]# chmod   a+rwx  test
+给所属主、同组和其他用户分配读、写和执行权限
+
+
+
+【数字表示法】
+
+[root@host root]# chmod 777 test
+给属主、同组和其他用户分配读、写和执行权限
+
+[root@host root]# chmod 500 test
+给属主用户分配读和执行的权限而同组和其他用户无权限
+
+[root@host root]# chmod 666 test
+给属主、同组及其他用户分配读和写的权限
+
+[root@host root]# chmod 711 test
+给属主分配读、写、执行权限，同组和其他用户分配执行权限
+
+
+一个linux文件给予w2写入和x1执行权限，请问有无4?读取权限!!!!!!!!
+
+
+
+
+
+【格式：chown [选项] 用户[:或.组] 文件或目录】
+
+格式：chown [选项] 用户[:或.组] 文件或目录
+
+[root@host root]# chown liuzhen  test
+将test属主改为liuzhen
+
+[root@host root]# chown lrj.lrj test
+将test的属主改为lrj、属组改为lrj
+
+[root@host root]# chown  -R wang:lrj test
+将test及在下的所有目录及文件的属主改为wang，属组改为lrj
+
+[root@host root]# chgrp  root test
+将test的属组改为root
+
+
+
+
+chattr [-RV][-v<版本编号>][+/-/=<属性>][文件或目录...]
+
+
+
+五、其他
+1、创建一个用户，就会默认的创建一个组；如果在创建用户的时候指定了其他所属组则不会默认创建该用户的组
+2、创建用户时指定家目录-d，该家目录事先不要创建，执行用户创建命令后会自动创建该目录（家目录）；如果事先已经创建了该目录，则需要从/etc/skel/目录下复制.bash_logout  .bash_profile  .bashrc这三个隐藏文件到用户的家目录下，否则该用户登录后没有环境变量。
+
+
+=====================================================================================================
+
+【5 压缩归档】
+
+
+一、压缩
+1、压缩格式
+      windows：rar、zip
+      Linux:gz、xz、zip、bz2
+2、压缩
+     将文件或目录压缩成更小的文件存放在磁盘中，压缩后文件占用磁盘空间更小，解压之后可以恢复到原来的状态大小。
+      asdfghjklasdsfghjklaadsffghfjgk
+      a----1    b-2    c-3   aa-6   ff-7
+      算法：每一种压缩方式算法是不一样的，因此每一种压缩方式压缩后的大小也是不一样的。
+    压缩比：1-9    默认6      -数字 指定压缩比   例如-5    
+    数字越大，压缩后的文件越小
+
+    压缩后默认删除源文件
+    只能压缩单个文件：gz、biz2、xz
+ 
+ 4、四种压缩方式
+ （1）.gz：“后缀名”        命令：gzip
+    gzip messages   压缩
+    压缩后的文件名默认在源文件名后加了.gz
+     解压缩：
+        gzip -d messages.gz
+        gunzip messages.gz
+     不解压查看：zcat  menssages.gz
+
+（2）bz2
+        .bz2 
+        压缩：bzip2 messages
+            bzip2 -k messages    保存源文件
+        解压缩：bzip2 -d messages.bz2  
+                    bunzip2  messages.bz2
+        不解压查看：bzcat messages.bz2
+                     
+（3）xz    
+        .xz     xz
+        压缩：xz messages 
+        解压缩：  xz -d messages.xz 
+                    unxz -k messages.xz    -k:保存源文件 
+        不解压查看：xzcat messages.xz 
+
+（4）zip
+        zip默认保存源文件，可以压缩目录
+        压缩：zip me.zip messages        
+        解压：unzip me.zip
+
+二、归档：tar
+        将多个文件合并为一个文件
+        -c: 创建归档文件
+        -f FILE.tar: 操作的归档后的文件名
+        -x: 展开归档
+                tar -xf 0426
+        --xattrs: 归档时,保留文件的扩展属性(如acl)信息
+        -t: 不展开归档,直接查看归档了哪些文件
+         创建归档：tar -cf 0426 /ect/passwd  /tmp/messages
+         不删除源文件
+
+三、归档并压缩
+    .tar.gz
+    .tar.bz2
+    
+    -zcf: 归档并调用gzip压缩
+        tar -zcf 0426.tar.gz /etc/passwd /var/log/messages     
+    -zxf: 调用gzip解压缩并展开归档,-z选项可省略
+        tar -zxvf 0426.tar.gz 
+   
+    -jcf:归档并调用 bzip2压缩
+         tar -jcf 0426.tar.bz2 /etc/passwd /var/log/messages   
+    -jxf:展开归档并解压缩
+          tar -jxf 0426.tar.bz2
+          
+    -Jcf: xz
+            tar -Jcf 0426.tar.xz /etc/passwd /var/log/messages
+    -Jxf:
+            tar -Jxf 0426.tar.xz
+      
+
+
+
+
+类型+属主+属组+所有(通用)
+-rwxrwxr-x
+ r4    w2   x1=777
+
+
+
+1、复制命令：cp            .当前目录    ..上一级目录   /根目录    ~家目录    从哪里复制到哪里
+	-a复制带特性     -r强制复制目录（可能不带权限） -u差异备份（复制）  -f 不提示直接复制   -i提示复制
+
+2、移动命令：mv     .当前目录    ..上一级目录   /根目录    ~家目录    从哪里移动到哪里（改变了物理目录路径）
+重命名
+
+
+3、删除文件及目录：rm      rm -fR 强制删除且不提示用户，直接删除文件及目录   rm -iR提示用户且删除文件及目录
+
+4、压缩成档案文件命令：tar     tar -cvzf ceshi2.tar.gz ceshi    将ceshi目录压缩成ceshi2.tar.gz文件
+                               tar -xvzf ceshi2.tar.gz ceshi    将ceshi2目录解压缩到ceshi目录中
+
+练习二（windows中屏幕截图，提交word文件名为：班级+姓名+学号后三位）：
+作业二：
+1、在/home/建立一个ceshi目录并访问
+2、查看当前目录
+3、将etc/passwd文件复制到当前目录和上一级目录中各一份
+4、将etc/shadow文件复制到当前目录中
+5、将shadow文件移动到上一级目录中
+6、在/home目录中建立ceshi/123/456/789     ceshi/456/789两个递归目录，并建立111 222 333三个平行目录
+7、删除ceshi/456/789递归目录
+7、将ceshi目录打包成学号档案文件
+8、强制不提示递归删除ceshi目录
+9、将学号档案文件解档为ceshi目录进行解压缩
+10、查看/home/下所有的文件及目录（包括隐藏信息）
+
+
+
+
+
+=======================================================================
+
+
+
+
+
+
+
+
+runlevel
+作用：查看当前运行的级别
+语法：runlevel
+[root@localhost home /]#runlevel
+
+
+
+
+touch　
+作用：常用来创建空文件
+语法： touch 文件名
+[root@localhost home /]# touch a
+[root@localhost home /]# ls a 
+a
+
+
+
+du查看当前系统数据（数据统计）
+ps -au查看当前系统进程
+bg find将当前命令置于后台进程
+top(任务管理器)查看当前系统的进程更新数，默认更新时间为5秒，top -d 20
+
+jobs查看后台运行进程
+
+
+fg find将后台进程调入前台执行
+
+
+
+
+
+
+
+
+
+
+Vi和Vim的区别及联系是什么？
+
+它们都是多模式编辑器，不同的是vim 是vi的升级版本，它不仅兼容vi的所有指令，而且还有一些新的特性在里面。
+vim的这些优势主要体现在以下几个方面：
+
+1、多级撤消
+我们知道在vi里，按 u只能撤消上次命令，而在vim里可以无限制的撤消。
+2、易用性
+vi只能运行于unix中，而vim不仅可以运行于unix,windows ,mac等多操作平台。
+3、语法加亮
+vim可以用不同的颜色来加亮你的代码。
+4、可视化操作
+就是说vim不仅可以在终端运行，也可以运行于x window、 mac os、 windows。
+5、对vi的完全兼容
+某些情况下，你可以把vim当成vi来使用。
+我前段时间也下载使用了vim编辑器，我用的xp系统，之前在linux SUSE下也用过vi，个人感觉是vim相对于vi来说，扩展性更强了，以前使用vi时ctrl+s和ctrl+z之类的是不能用的（应该没有记错），但是vim就可以的。
+
+
+
+
+
+
+
+
+
+
+
+
+
+vim 编辑器模式切换:
+命令模式 、命令行模式、编辑模式
+
+命令模式：
+     字符操作
+  字符操作
+	i 当前插入
+	I 行首插入
+	a 当前字符之后插入
+	A 行尾插入
+
+
+
+
+esc 退出当前模式   
+o 下一行插入
+	O 上一行插入
+	x 向后删除一个字符
+	X 向前删除一个字符
+	u 撤销一步  
+   行操作
+
+
+
+
+
+
+
+
+home键或^ 行首 
+$行尾 	end键
+
+
+
+
+dd 删除一行 Ndd
+	yy 复制一行 Nyy 复制N行
+	p  将复制行粘贴 P上粘
+
+    词操作
+dw 删除一个词，删除时要将光标移动到这个词的行首。 另外，如果光标不在行首，则删除光标之后的字母。
+	yw 复制一个词
+
+块操作
+	大D 或d+$删至行尾 d+^ 删至行首
+	y+$ 复制至尾 y+^ 复制至首
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+v 模式
+		进入v模式 移动光标选择区域、
+编程的时候需要进行多行注释：
+1、注释：ctrl+v 进入列编辑模式
+2、向下或向上移动光标
+3、把需要注释的行的开头标记起来
+4、然后按大写的I
+5、再插入注释符,比如"#"。
+6、再按Esc,就会全部注释了。
+
+删除多行注释：
+7、删除：再按ctrl+v 进入列编辑模式；向下或向上移动光标 ；选中注释部分,然后按d, 就会删除注释符号。
+
+
+
+
+
+
+VIM命令行模式操作
+:w 保存 save
+:q 没有进行任何修改，退出 quit
+:q! 修改了，不保存，强制退出
+:wq 保存并退出 
+:wq! 强制保存并退出。
+
+保存：
+ZZ  。    改一个字符： r   再对应文字
+
+
+
+
+
+
+
+
+替换
+:%s/this/ that 每一行的第一个this被替换成that   
+:%s/this /that/g 将文本中所有的this替换成that
+
+:1,5 s/old/new/g   #替换第一行到第5行中匹配内容。
+:set nu/nonu   #显示行号和取消行号
+/ 正向查找  ：/target     n 往下查找，N 往上查找
+	去消高亮显示：  noh  或 随便查找一组没有的字符
+
+: !ls 调用系统命令
+编辑文目录：
+如果不小心打开目录，直接退出就可以了。
+
+
+vim中定位到某行：
+gg  定位到行首
+G  定位到最后一行，行首
+
+vim打开多个文件：
+vim打开多个文件：
+#vim -O file1 file2   ctrl+ww 在两个文件间切换。
+
+
+
+
+=====================================================================================================
+
+【6 磁盘管理】
+
+
+
+存储设备知识
+1、存储设备类型（SSD、HHD、HDD）
+    （1）固态硬盘（Solid State Drive）:
+        用固态电子存储芯片阵列而制成的硬盘，由控制单元和存储单元（FLASH芯片、DRAM芯片）组成。固态硬盘在接口的规范和定义、功能及使用方法上与普通硬盘的完全相同，在产品外形和尺寸上也完全与普通硬盘一致。被广泛应用于军事、车载、工控、视频监控、网络监控、网络终端、电力、医疗、航空、导航设备等领域。
+        优点：读写速度快；防震抗摔性；低功耗；无噪音；工作温度范围大；轻便
+        缺点：容量小；寿命有限；售价高
+    （2）混合硬盘（hybrid harddrive，HHD）:
+        是既包含传统硬盘又有闪存（flashmemory）模块的大容量存储设备。闪存处理存储中写入或恢复最频繁的数据。很多公司开始提供这项技术的变体，他们期望它会在高端系统中受到追捧，尤其是在笔记本电脑和个人数字助理中。
+        相比传统硬盘，混合硬盘（hybrid hard drive，HHD）有很多优点，包括：应用中的数据存储与恢复更快，如文字处理机；系统启动时间减少；功耗降低；生成热量减少；硬盘寿命延长；笔记本和PAD的电池寿命延长；工作噪声级别降低。
+        混合硬盘（hybrid hard drive，HHD）的不足包括：硬盘中数据的寻道时间更长；硬盘的自旋变化更频繁；闪存模块处理失败，不可能进行其中的数据恢复；系统的硬件总成本更高。
+    （3）传统硬盘（HDD，Hard Disk Drive的缩写）:
+        即硬盘驱动器的英文名。最基本的电脑存储器，我们电脑中常说的电脑硬盘C盘、D盘为磁盘分区都属于硬盘驱动器。目前硬盘一般常见的磁盘容量为80G、128G、160G、256G、320G、500G、750G、1TB、2TB等等。硬盘按体积大小可分为3.5寸、2.5寸、1.8寸等；按转数可分为5400rpm/7200rpm/10000rpm等；
+    （4）SSD和HDD的比较
+        在过去10年中，CPU的性能提升了150倍以上，而传统硬盘才提升了1.5倍不到，这种不均衡的发展，极大的影响了整体性能的提升，尤其在I/O方面，而且SSD（固态硬盘）相比起传统硬盘，它没有磁头，马达，磁盘等一系列的零件，搭载NAND Flash芯片作为存储介质，在运行速度，功耗，轻便等方面是传统硬盘所无法比拟的。目前传统硬盘因为成本低廉等因素依然占据着硬盘市场的主要份额，然而随着SSD的成本不断的降低，技术不断提升与系统更好的支持等因素，而且目前主流的笔记本电脑也都均配置SATA和mSATA接口，包括目前的超极本(Ultrabook)也只有搭载SSD才可能实现“更轻，更快，更低功耗，未来取代传统硬盘也是大势所趋。
+
+2、存储设备接口类型
+        目前所能见到的硬盘接口类型主要有IDE、SATA、SCSI、SAS、FC等等。 IDE是俗称的并口，SATA是俗称的串口，这两种硬盘是个人电脑和低端服务器常见的硬盘。SCSI是"小型计算机系统专用接口"的简称，SCSI硬盘就是采用这种接口的硬盘。SAS就是串口的SCSI接口。一般服务器硬盘采用这两类接口，其性能比上述两种硬盘要高，稳定性更强，但是价格高，容量小，噪音大。FC是光纤通道，和SCIS接口一样光纤通道最初也不是为硬盘设计开发的接口技术，是专门为网络系统设计的，但随着存储系统对速度的需求，才逐渐应用到硬盘系统中。SSD也称作电子硬盘或者固态电子盘，是由控制单元和固态存储单元（DRAM或FLASH芯片）组成的硬盘。固态硬盘的接口规范和定义、功能及使用方法上与普通硬盘的相同，在产品外形和尺寸上也与普通硬盘一致。新一代的固态硬盘普遍采用SATA-2接口，但其成本较高。 
+
+3、存储设备重要参数
+        （1）转速：指硬盘主轴马达每分钟（带动磁盘）的转速，比如5400 RPM就代表该硬盘中主轴转速为每分钟5400转。目前台式机硬盘转速依然为7200转，而主流笔记本的转速正在由5400转过渡到7200转，性能提升非常明显。
+        （2）单碟容量：硬盘相当重要的参数之一。硬盘是由多个存储碟片组合而成，而单碟容量就是指一个存储碟所能存储的最大数据量。目前在垂直记录技术的帮助下，单碟容量已经发展到667GB。它提高不仅可以带来总容量提升，有利于降低生产成，提高工作稳定性；而且单碟容量越大其内部数据传输速率就越快。
+        （3） 平均寻道时间：指硬盘在盘面上移动读写磁头到指定磁道寻找相应目标数据所用的时间，单位为毫秒。当单碟容量增大时，磁头的寻道动作和移动距离减少，从而使平均寻道时间减少，加快硬盘访问速度。
+        （4）缓存：硬盘与外部交换数据的临时场所。硬盘读/写数据时，缓存就像一个中转仓库一样，不断的写入数据、清空再写入数据。目前大多数硬盘缓存已经达到32MB，而对于大容量产品则均为64MB。
+        （5）内部数据传输率：指硬盘磁头与缓存之间的数据传输率，简单说就是硬盘将数据从盘片上读取出来，然后存储在缓存上的速度。内部传输率可以明确表现出硬盘的读写速度，它的高低才是评价一个硬盘整体性能的决定性因素。目前大多数桌面级硬盘基本都在70-90MB/S之间，笔记本硬盘则在55MB/S左右。
+
+
+-----------------------------------------------------------------------------------------
+文件系统
+1、文件系统结构 supper block, inode, block
+    （1）supper block
+        它是硬盘分区开头——开头的第一个byte是byte 0，从 byte 1024开始往后的一部分数据。由于 block size最小是 1024 bytes，所以super block可能是在block 1中（此时block 的大小正好是 1024 bytes），也可能是在block 0中。 超级块中的数据其实就是文件卷的控制信息部分，也可以说它是卷资源表，有关文件卷的大部分信息都保存在这里。例如：硬盘分区中每个block的大小、硬盘分区上一共有多少个block group、以及每个block group中有多少个inode。
+    （2）inode
+        文件储存在硬盘上，硬盘的最小存储单位叫做"扇区"（Sector）。每个扇区储存512字节（相当于0.5KB）。操作系统读取硬盘的时候，不会一个个扇区地读取，这样效率太低，而是一次性连续读取多个扇区，即一次性读取一个"块"（block）。这种由多个扇区组成的"块"，是文件存取的最小单位。"块"的大小，最常见的是4KB，即连续八个 sector组成一个 block。文件数据都储存在"块"中，那么很显然，我们还必须找到一个地方储存文件的元信息，比如文件的创建者、文件的创建日期、文件的大小等等。这种储存文件元信息的区域就叫做inode，中文译名为"索引节点"。每一个文件都有对应的inode，里面包含了与该文件有关的一些信息。
+    （3）block
+
+2、文件系统类型
+    （1）ext2
+        第二代扩展文件系统（英语：second extended filesystem，缩写为ext2），是Linux内核所用的文件系统。它开始由Rémy Card设计，用以代替ext，于1993年1月加入Linux核心之中。它和BSD中的Unix文件系统具有相同的设计标准，同时也是Linux上的第一个商业级文件系统。ext2的经典实现是Linux内核中名为“ext2fs”的文件系统驱动；其他的实现（它们的软件质量和完整性可能不同）存在于GNU Hurd，Minix 3，以及某些BSD系统中，同时也以第三方驱动的形式存在于包括Windows和OS X在内的的操作系统。ext2是多个LINUX发行版的默认文件系统，如Debian、Red Hat Linux等。直到后来完全兼容ext2的日志系统ext3开始替换ext2时，ext2仍然是闪存设备（例如：SD卡和U盘）上的Linux所使用的文件系统，因为没有日志功能使得Linux性能更好，同时也能减少写入的次数（闪存设备通常具有有限的写入次数）。最新版本的内核，同样也支持一种不含日志模式的ext4文件系统，这种模式能够带来类似的好处以及一些ext4独有的优点。
+        总结：无日志功能（直接往硬盘写数据，读写速度快，但断电会丢失）。
+    （2）ext3
+        第三代扩展文件系统（英语：Third extended filesystem，缩写为ext3），是一个日志文件系统，常用于Linux操作系统。它是很多Linux发行版的默认文件系统。Stephen Tweedie在1999年2月的内核邮件列表[2]中，最早显示了他使用扩展的ext2，该文件系统从2.4.15版本的内核开始，合并到内核主线中。虽然它的性能（速度）不如它的竞争对手，例如JFS2，ReiserFS和XFS，但它具有重要的优势，那就是它允许在适当的时候从流行的ext2文件系统升级，而无需备份和恢复数据；除此之外，它还具有比ReiserFS和XFS更低的的CPU使用率。ext3文件系统增加的超越其前代的包括：位目录跨越多个块提供基于树的目录索引和在线系统增长。
+        总结：有日志功能（先往日志缓冲区写数据，速度稍慢，安全。如果对数据安全行要求很高，建议使用ext3）。
+    （3）ext4
+        第四代扩展文件系统（英语：Fourth extended filesystem，缩写为ext4）是Linux系统下的日志文件系统，是ext3文件系统的后继版本。Ext4具有以下特点：
+        大型文件系统：ext4文件系统可支持最高1 Exbibyte的分区与最大16 Tebibyte的文件。
+        extent：ext4引进了Extent文件存储方式，以替换ext2/3使用的block mapping方式。Extent指的是一连串的连续实体block，这种方式可以增加大型文件的效率并减少分裂文件。ext4支持的单一Extent，在单一block为4KB的系统中最高可达128MB。单一inode中可存储4笔Extent；超过四笔的Extent会以Htree方式被索引。
+        向下兼容：ext4向下兼容于ext3与ext2，因此可以将ext3和ext2的文件系统挂载为ext4分区。由于某些ext4的新功能可以直接运用在ext3和ext2上，直接挂载即可提升少许性能。ext3文件系统可以部分向上兼容于ext4（也就是说ext4文件系统可以被挂载为ext3分区）。然而若是使用到Extent技术的ext4将无法被挂载为ext3。
+        预留空间：ext4允许对一文件预先保留磁盘空间。目前大多数文件系统做到这点的方式是直接产生一个填满0的文件；ext4和XFS可以使用Linux核心中的一个新的系统调用“fallocate()”获取足够的预留空间。
+        延迟获取空间：ext4使用一种称为allocate-on-flush的方式，可以在数据将被写入磁盘（sync）前才开始获取空间；大多数文件系统会在之前便获取需要的空间。这种方式可以增加性能并减少文件分散程度。
+        突破32000子目录限制：ext3的一个目录下最多只能有32000个子目录。ext4的子目录最高可达64000，且使用“dir_nlink”功能后可以达到更高（虽然父目录的link count会停止增加）。为了避免性能受到大量目录的影响，ext4默认打开Htree（一种特殊的B树）索引功能。该功能已经实现于Linux核心2.6.23版。
+        日志校验和：Ext4使用校验和特性来提高文件系统可靠性，因为日志是磁盘上被读取最频繁的部分之一。这个特性还有一个好处就是可以安全地避免日志处理时磁盘I/O的等待，而稍微提高一些性能。日志校验和的技术源于威斯康辛大学的一篇名为IRON File Systems的研究论文。
+        在线磁盘整理：对于在线磁盘整理工具有许多草案，但是这些草案都没有被包含在主流的内核当中。即使Ext4包含有许多避免磁盘碎片的技术，但是磁盘碎片还是难免会在一个长时间使用过的文件系统中存在。Ext4将会有一个具有磁盘整理功能的工具。
+        快速文件系统检查：Ext4将未使用的区块标记在inode当中，这样可以使诸如e2fsck之类的工具在磁盘检查时将这些区块完全跳过，而节约大量的文件系统检查的时间。这个特性已经在2.6.24版本的Linux内核中实现。
+    （4）xfs
+        XFS，一种高性能的日志文件系统，最早于1993年，由Silicon Graphics为他们的IRIX操作系统而开发，是IRIX 5.3版的默认文件系统。2000年5月，Silicon Graphics以GNU通用公共许可证发布这套系统的源代码，之后被移植到Linux内核上。XFS特别擅长处理大文件，同时提供平滑的数据传输。RHEL7上默认采用XFS格式的文件系统。xfs可为Linux和开放社区带来如下新特性：
+        可升级性：xfs被设计为可升级的，以满足大多数存储容量和I/O存储需求。xfs可处理大型文件系统和包含巨大数量文件的大型目录。
+        优秀的I/O性能：xfs可以很好的满足I/O请求的大小和并发I/O请求的数量。xfs可作为root文件系统，并被LILO支持。
+    （5）swap
+        Swap分区在系统的物理内存不够用的时候，把硬盘空间中的一部分空间释放出来，以供当前运行的程序使用。那些被释放的空间可能来自一些很长时间没有什么操作的程序，这些被释放的空间被临时保存到Swap分区中，等到那些程序要运行时，再从Swap分区中恢复保存的数据到内存中。
+    （6）btrfs
+        Btrfs（通常念成Butter FS），由Oracle于2007年宣布并进行中的COW(copy-on-write式)文件系统。目标是取代Linux目前的ext3文件系统，改善ext3的限制，特别是单一文件大小的限制，总文件系统大小限制以及加入文件校验和特性。加入目前ext3/4未支持的一些功能，例如可写的磁盘快照(snapshots)，以及支持递归的快照(snapshots of snapshots)，内建磁盘阵列（RAID）支持，支持子卷(Subvolumes)的概念，允许在线调整文件系统大小。
+
+------------------------------------------------------------------------------------------------------
+分区管理
+一、MBR和GPT
+1、MBR：MBR分区表(即主引导记录)大家都很熟悉。所支持的最大卷：2T，而且对分区有限制：最多4个主分区或3个主分区加一个扩展分区。
+         Linux下MBR磁盘的表示方法
+        在linux操作系统中，用hda便是IDE硬盘、sda表示STAT/SCSI/SAS硬盘、vda表示虚拟磁盘。Linux下分区表示知识点如下：
+           最多支持四个主分区；
+            第一个主分区叫sda1；第二个主分区叫sda2；第三个主分区叫sda3；第四个主分区（扩展分区）叫sda4；
+            所有的逻辑分区第一个都是sda5；那么sda8为第四个逻辑分区。
+ 
+ 2、GPT： GPT（即GUID分区表）。是源自EFI标准的一种较新的磁盘分区表结构的标准，是未来磁盘分区的主要形式。与MBR分区方式相比，具有如下优点。突破MBR 4个主分区限制，每个磁盘最多支持128个分区。支持大于2T的分区，最大卷可达18EB。
+        
+二、fdisk：MBR格式的磁盘分区工具
+1、查看磁盘
+	#fdisk -l   fdisk只能查看mbr的分区
+	    Device:分区的设备名；
+        Boot：是否为引导分区，是则有*标识；
+        Start：该分区在硬盘中的起始位置（柱面数）；
+        End：结束位置；
+        Block：分区的大小（默认单位KB）；
+        Id：分区类型的ID标记号（EXT3=83,LVM=8e）；
+        System：分区类型。
+	盘片 磁道 磁头 柱面 扇区
+	从一个柱面开始到一个柱面结束，中间的大小就是分区的大小
+	每个柱面都有固定大小
+	
+2、#df -Th   查看挂载信息
+	-h 显示大小单位
+	-T 显示每个分区的文件系统类型
+    
+    fdisk和df查出来的东西不一样:
+	fdisk可以查到MBR分区方式的所有分区
+	df只能看到已经挂载的分区
+
+    du这个命令跟磁盘无关，只是长的像：
+	查询目录大小
+	#du -h 查看目录连带目录下所有文件大小的和(ls办不到)
+
+3、MBR磁盘分区:
+（1）新建分区
+	#fdisk /dev/sda     /dev/sda是被操作的设备
+	p print partition 打印分区信息
+	n new partition   新建分区
+	e 新建extended(扩展)分区
+	  在rhel5里面扩展分区不能格式化(rhel6可以，但是会变成主分区)
+	选择新分区开始柱面:这个开始柱面一般我们会使用默认柱面
+	fdisk分区如果不报存的话不会立马生效(parted命令分的区会立即生效)
+
+	在扩展分区的基础上再新建逻辑分区
+	Command (m for help): n
+	First cylinder (51274-60801, default 51274): （直接默认回车）
+	Using default value 51274
+	Last cylinder, +cylinders or +size{K,M,G} (51274-60801, default 60801	 ):+100M
+
+	w 保存退出
+
+（2）删除分区:
+	#fdisk /dev/sda
+	p
+	d 删除分区 
+	选择想要删除的分区
+	t 指定文件系统id
+		l查看所有的文件系统id
+	m 查看帮助
+	q 退出
+
+    文件系统id
+	83  ext3或者ext4
+	82  swap
+	8e  lvm
+	7   ntfs
+	16  fat32
+
+（3）更新分区表:两种方法
+	1)reboot
+	2)partprobe /dev/sda
+
+（4）制作文件系统:两种方法
+	1)#mkfs.ext4 /dev/sda5
+	2)#mkfs -t ext4 /dev/sda5
+
+（5）使用文件系统:mount
+	#mount /dev/sda5 /sda5
+	#umount {挂载设备|挂载点}	
+	#mount
+
+开机挂载:3种方法
+1)把mount命令写到/etc/rc.local
+如果在开机过程当中用到这个分区上的文件，这种方法就没用了
+2)使用autofs服务实现自动挂载
+3)vim /etc/fstab
+	6列
+ 	第1列:挂载设备（3种写法）
+ 		  (1)/dev/sda5
+ 		  (2)LABEL=卷标名称    rhel5的默认写法
+ 		  (3)UUID=设备的uuid   rhel6的默认写法
+ 	第2列:挂载点
+ 	第3列:文件系统类型
+ 	第4列:文件系统属性	
+	第5列:是否对文件系统进行磁带备份
+		  0 不备份
+		  1 1天一次
+		  2 2天一次
+	第6列:是否检查文件系统
+		  0 不检查
+		  1 先检查
+		  2 后检查
+	/dev/sda5 /sda5 ext4 defaults 0 0
+	
+
+更改硬盘的块大小
+	# mkfs.ext4 -b 2048 /dev/sda6   【更改ext4格式的分区块大小，指定块大小为2048KB】
+	# mkfs.xfs -f -b size=2048 /dev/sda5   【更改xfs格式的块大小，-f为强制】
+
+查看分区信息
+	# tune2fs -l /dev/sda6    【查看ext4的分区信息】
+	# xfs_info /dev/sda5   【查看xfs的分区信息】
+
+卷标制作:
+	# e2label /dev/sda5 study
+
+卷标查看:
+	# findfs LABEL=study 查看卷标是study的设备是哪个
+	# e2label  /dev/sda5 查看/dev/sda5的卷标是什么
+
+uuid查看:
+	1)#blkid /dev/sda5
+	 /dev/sda5: UUID="a603330d-aaca-4b0c-844a-700ced5517fa" TYPE="ext4"
+	2)#dumpe2fs /dev/sda5
+
+手动检查修复文件系统:
+#fsck -p /dev/sda5
+
+    
+三、parted命令
+        可以划分单个分区大于2T的GPT格式的分区，也可以划分普通的MBR分区，fdisk命令对于大于2T的分区无法划分（大于2.2TB的存储空间用fdisk不支持，需要采用parted来分区），所以用fdisk无法看到parted划分的GPT格式的分区。
+
+gpt分区方法
+	fdisk命令不能用
+	#parted /dev/sda
+	help 			   打印帮助
+	print 			   打印分区情况
+	unit KB(或者MB,GB) 指定显示单位
+	check 5 		   检查磁盘坏块
+	mklabel gpt		   指定分区表格式为gpt的
+	mklabel msdos      指定分区表格式为mbr的
+	mkpart /dev/sdb    创建新分区
+	rescue 1000M 3000M 修复分区(找回分区)
+	rm 2			   删除分区,2是分区号码
+	quit 			   退出		
+    p           查看分区信息
+非交互式parted：
+	#parted /dev/sdb mkpart primary(gpt不需要加) 1000M 2000M
+
+格式化——挂载使用
+
+--------------------------------------------------------------------------------
+挂载
+mount命令
+	#mount
+	#mount 参数 挂载设备 挂载点
+	-t 文件系统类型
+	ext3 ext4 nfs cifs ntfs-3g iso9660  
+	
+	-o 文件系统属性
+		rw 读写
+		ro 只读
+		remount 重新挂载 
+		usrquota 支持用户磁盘配额
+		grpquota 支持组的磁盘配额
+		loop  挂载镜像的时候使用
+		sync  同步传输
+		async 异步传输
+		defaults-->rw async suid sgid ...(man mount)
+	#umount  设备名称
+	#umount  挂载点
+	 
+	#mount -t nfs  192.168.0.253:/abc /opt
+	#mount -t cifs //192.168.0.253/共享名称 /opt
+
+-----------------------------------------------------------------------------
+自动挂载
+automount
+        自动挂载器是一个监视目录的守护进程，并在目标子目录被引用时，自动执行预定义的挂载
+        自动挂载器由autofs服务脚本管理
+        自动挂载器由auto.master配置文件进行配置,该文件引用了一个按惯例称作/etc/auto.misc
+    （1）查看autofs是否安装
+        [root@ezsvs cd]# rpm -q autofs
+        autofs-5.0.7-56.el7.x86_64 
+    （2）配置主配置文件
+        [root@ezsvs cd]# vi /etc/auto.master     
+        /misc   /etc/auto.misc      【自动挂载目录，默认就有，无需更改】
+    （3）配置挂载文件
+        [root@ezsvs cd]# vi /etc/auto.misc  
+        cd              -fstype=iso9660,ro,nosuid,nodev :/dev/cdrom   【自动挂载光盘文件】
+    （4）重启服务
+        [root@ezsvs cd]# systemctl restart autofs
+    （5）测试
+        [root@ezsvs ~]# cd /misc/   【进到自动挂载目录】
+        [root@ezsvs misc]# ls       【ls什么目录都没有，但是】
+        [root@ezsvs misc]# cd cd   【可以直接切换到cd目录】
+        [root@ezsvs cd]# ls    【可以看到光盘中的文件】
+        CentOS_BuildTag  GPL       LiveOS    RPM-GPG-KEY-CentOS-7
+        EFI              images    Packages  RPM-GPG-KEY-CentOS-Testing-7
+        EULA             isolinux  repodata  TRANS.TBL
+
+创建swap分区
+方法一、
+	使用fdisk命令创建一个分区，在fdisk中配置。fdisk----n---回车---500M---t---7----82--w
+	[root@ezsvs ~]# partprobe /dev/sda
+	[root@ezsvs ~]# mkswap /dev/sda7
+	写入fstab
+	/dev/sda6	swap 	swap	defaults	0 0
+	[root@ezsvs ~]# swapoff -a
+	[root@ezsvs ~]# swapon -a
+	[root@ezsvs ~]# swapon -s
+	[root@ezsvs ~]# free -m
+	
+	
+方法二、文件创建虚拟内存
+	[root@ezsvs ~]# dd if=/dev/zero of=swapfile bs=10M count=300
+	[root@ezsvs ~]# mkswap swapfile
+	写入fstab
+	/swapfile	swap 	swap	defaults	0 0
+	[root@ezsvs ~]# swapoff -a
+	[root@ezsvs ~]# swapon -a
+	[root@ezsvs ~]# swapon -s
+	[root@ezsvs ~]# free -m
+
+
+
+-------------------------------------------------------------------------------
+quota（磁盘配额）
+磁盘配额概念：
+	系统给用户配置的他可以使用磁盘的额度
+额度
+	可以使用磁盘的大小或者可以创建的文件做大个数
+区块配额
+	拿大小来限制用户
+索引节点配额
+	拿能创建的文件的个数来限制用户
+软限制(soft)
+	警告额度
+硬限制(hard)
+	最大额度
+限期
+	到达软限制之后，限期之内还能继续使用磁盘
+默认限期
+	7天
+默认单位是kb
+
+操作:
+1.检查内核是否支持quota
+2.检查文件系统是否支持quota
+3.初始化磁盘配额数据库
+4.配置磁盘配额
+5.激活(关闭)
+6.测试
+修改默认限期
+拷贝磁盘配额给其他账户
+
+操作: 
+1.检查内核是否支持quota
+	# cat /boot/config-2.6.32-358.el6.x86_64 |grep -i quota
+2.检查文件系统是否支持quota
+	# mount | grep sda5
+	/dev/sda5 on /sda5 type ext4 (rw)
+	vim /etc/fstab
+	  /dev/sda5  /aaa  xfs   defaults,usrquota,grpquota  0 0
+	
+	
+	# mount | grep sda5
+	/dev/sda5 on /sda5 type ext4 (rw,usrquota,grpquota)
+
+3.初始化磁盘配额数据库
+	# quotacheck -avug
+	-a 所有的分区
+	-v 显示详细信息
+	-u 用户
+	-g 组
+	不用-c时会检查数据库是否存在，如果不存在会创建，所以-c可以不用
+	-c 创建新的磁盘配额数据库
+	-a可以用具体的设备代替
+	# quotacheck -vug /dev/sda5
+
+4.配置磁盘配额
+	# useradd tom
+	# edquota -u tom
+Disk quotas for user tom (uid 1008):
+Filesystem blocks soft   hard   inodes  soft     hard
+/dev/sda5    0    10000  20000     0       0        0
+
+各自段意义：
+Filesystem：当前正在设置配额限制的文件系统。
+blocks：当前用户已经使用的磁盘分区空间，单位是KB。
+soft：对用户使用的磁盘空间或文件数的软限制（磁盘空间单位是KB）。用户使用的磁盘空间或文件数在过渡期内可以超过这个限制。
+hard：对用户使用的磁盘空间或文件数的硬限制。用户使用的磁盘空间或文件数绝对不能超过此限制。
+inodes：用户在当前磁盘空间中占用的i节点数，由系统自动统计，用户不必修改此项。
+在磁盘配额界面中有两组soft、hard字段，其中前一组soft、hard表示对磁盘空间大小的限制，后一组表示对文件数的限制。
+由于文件数限制对一般的使用者而言意义不大，因此设置磁盘配额时，一般不在文件数上设置限制。
+注意：修改磁盘配额时，无论是磁盘空间限制，还是文件数限制，硬限制的数值都应该比软限制大。
+
+5.激活(关闭) 
+	# quotaon -avug
+	/dev/sda5 [/sda5]: group quotas turned on
+	/dev/sda5 [/sda5]: user quotas turned on
+6.测试
+	区块配额测试:
+	#su - tom
+	$ dd if=/dev/zero of=/sda5/aa.txt  bs=5M count=3
+	sda5: warning, user block quota exceeded.
+	$ dd if=/dev/zero of=/sda5/bb.txt  bs=6M count=1
+	sda5: write failed, user block limit reached.
+	节点配额测试:
+	#!/bin/bash
+	for i in {101..220}
+	do
+		 touch file$i
+	done
+	或者
+	[tom@wing /sda5]$ touch file{1..100}
+7、查看用户配额使用情况
+    quota -u tom
+
+修改默认限期
+	# edquota -t 
+拷贝磁盘配额给其他账户
+	# edquota -p tom user3000 user3001 user3002
+	把tom的磁盘配额配置复制给user3000 user3001 user3002
+
+区块配额和节点配额可以配合用,谁先到限制就用谁的。
+报告已经使用磁盘配额账户的使用量
+	#repquota -a
+
+练习：
+	自己测试节点配额
+	测试组的磁盘配额，测试是对整个组里的每一个账户都有你规定的限制，还是整个组一起只有那点限制。
+
+--------------------------------------------------------------------------------------
+
+lvm：逻辑卷管理器
+不损坏磁盘数据的情况下对磁盘空间进行增加、删除,LVM的作法
+是将几个物理分区(或磁盘)通过软件组合成一块看起来是对立的大磁盘(VG),然后将这块大磁盘再经过分成可使用的分区(LV),最终能够挂载使
+用。LVM屏蔽了底层的磁盘布局,便于动态调整磁盘容量。/boot分区用于存放引导文件,不能应用LVM机制。
+
+PV：物理卷  
+VG：逻辑卷组
+LV：逻辑卷  
+LVM管理步骤：
+1、对磁盘进行分区
+        fdisk /dev/sdb
+            新建4个分区-------t-------8e------w
+2、partprobe /dev/sdb
+3、pvcreate /dev/sdb{8,9,10,11}
+    pvscan
+4、vgcreate vg01  /dev/sdb8 /dev/sdb9
+    vgdisplay
+5、lvcreate -L 600M -n game /dev/vg01
+      lvcreate -l 80 -n game2 /dev/vg01
+      lvdisplay
+6、格式化
+7、挂载使用
+
+
+PV：物理卷  
+VG：逻辑卷组
+LV：逻辑卷  
+扩大VG卷组：
+        vgextend vg01 /dev/sdb10 /dev/sdb11
+扩大lv卷
+        lvextend -L 100M /dev/vg01/game 
+        lvextend -L +10M /dev/vg01/game
+刷新内核
+        xfs_growfs   /dev/vg01/game
+        resize2fs  /dev/vg01/game2
+
+文件系统类型：ntfs、xfs、ext4、swap
+分区类型system：LVM、raid、linux、swap
+
+
+--------------------------------------------------------------
+raid介绍
+
+raid：
+    0：带区卷
+    1：镜像卷
+    3：奇偶校验卷
+    5：分布式奇偶校验卷
+    6：双重奇偶检验卷
+ 
+    作用对象：硬盘   
+    分区： 
+    创建raid1
+
+最常用的raid级别:0 1 5 10
+raid0
+最少需要两块磁盘，分别往每一块磁盘上写一部分数据
+优点:读写速度快
+缺点:没有其他raid级别安全性高
+
+raid1 又叫镜像raid
+最少需要两块磁盘，每块磁盘上都会存储一份完整数据
+优点:安全性高，读速度快
+缺点:写速度慢
+
+raid5
+最少需要3块磁盘，两块磁盘存数据，一块磁盘存校验位
+优点:可以找回丢失的数据
+	 冗余磁盘-->当某一块磁盘坏掉后，冗余磁盘会自动替换上去
+	 安全性比raid1还高
+读写速度在raid0和raid1之间
+
+操作:
+制作raid5
+1.需要4个分区，不需要格式化
+2.配置raid5
+# mdadm -C /dev/md0 -l 5 -n 3 -x 1 /dev/sda{6,7,8,9}
+-C 创建md设备，指定设备名称
+-l 级别
+-n 工作磁盘个数
+-x 冗余磁盘个数
+
+3.创建文件系统
+	# mkfs.ext4 /dev/md0
+4.挂载使用
+	# mount /dev/md0 /md0
+5.开机生效(raid0)
+	# mdadm -Ds > /etc/mdadm.conf
+6.开机挂载
+	使用之前挂载分区的方法
+
+	#mdadm -D /dev/md0
+    #watch -n .5 mdadm -D /dev/md10
+
+破坏性实验:
+	指定sda7为faulty
+	# mdadm -f /dev/md0 /dev/sda7
+	热插拔:
+	# mdadm -r /dev/md0 /dev/sda7  拔掉
+	# mdadm -a /dev/md0 /dev/sda7  插上
+
+停止raid：
+	先卸载
+	#mdadm -S /dev/md0
+激活raid：
+	#mdadm -A /dev/md0
+
+正常删除raid设备:
+    卸载
+    全部指定为faulty
+    全部-r
+    停止-S
+    删除配置文件 删除分区 删除md0
+
+
+练习:
+	把raid0 和raid1合起来做
+	# mdadm -C /dev/md0 -l 0 -n 2 /dev/sda{6,7}
+	# mdadm -C /dev/md0 -l 1 -n 2 /dev/sda{6,7}
+	# mdadm -C /dev/md0 -l 10 -n 4 /dev/sda{6,7,8,9}
+
+
+
+
+
+--------------练习----------------------
+
+
+
+fdisk命令
+用途：在交互式的操作环境中管理磁盘分区
+格式：fdisk  [磁盘设备]
+交互模式中的常用指令
+m：查看操作指令的帮助信息
+p：列表查看分区信息
+n：新建分区
+d：删除分区
+t：变更分区类型
+w：保存分区设置并退出
+q：放弃分区设置并退出
+l: 列出已知的分区类型
+a:设置激活启动分区类型
+
+
+
+[root@localhost ~]#fdisk /dev/sda
+
+
+
+
+
+用mkfs命令建立文件系统。
+[root@localhost ~]# mkfs -t ext3 /dev/sdb1
+
+
+建立和使用交换文件：
+[root@Server ~]# mkswap  /dev/sdb5创建swap分区  
+[root@Server ~]# swapon  /dev/sdb5启用
+[root@Server ~]# swapoff  /dev/sdb5停用
+
+
+列出各文件系统的占用情况：
+[root@Server ~]# df
+
+
+以字节为单位列出所有文件和目录的磁盘空间占用情况。命令如下所示：
+[root@Server ~]# du -ab
+
+
+
+【手动挂载】
+
+mount命令
+用途：挂载文件系统、ISO镜像到指定文件夹
+格式：mount  [ -t 类型?]  存储设备  挂载点目录
+              mount  -o loop  ISO镜像文件  挂载点目录
+
+
+把文件系统类型为ext3的磁盘分区/dev/sda2挂载到/media/sda2目录下，可以使用命令：
+[root@Server ~]# mount -t ext3 /dev/sda2 /media/sda2
+
+[root@Server ~]# mount /dev/sdb3 自动读取fstab自动挂载配置文件信息
+
+
+//挂载光盘
+[root@Server ~]# mount -t iso9660 /dev/cdrom  /media/cdrom  
+或者使用下面的命令也可以完成光盘的挂载
+[root@Server ~]# mount  /media/cdrom  
+
+
+
+umount命令
+用途：卸载已挂载的文件系统
+格式：umount  存储设备位置
+              umount  挂载点目录
+
+光驱托盘操作
+弹出光驱：eject
+收回光驱：eject -t
+
+
+【自动挂载】
+[root@Server ~]#vi /etc/fstab
+
+/etc/fstab配置文件 
+包含了需要开机后自动挂载的文件系统记录
+
+[root@localhost ~]# vi  /etc/fstab
+/dev/VolGroup00/LogVol00   /                 ext3      defaults                 1    1
+LABEL=/boot                         /boot          ext3      defaults                 1    2
+devpts                                    /dev/pts     devpts  gid=5,mode=620   0    0
+tmpfs                                      /dev/shm   tmpfs    defaults                 0    0
+proc                                        /proc          proc      defaults                 0    0
+sysfs                                      /sys            sysfs     defaults                 0    0
+/dev/VolGroup00/LogVol01  swap          swap     defaults                 0    0
+
+把文件系统类型为ext3的磁盘分区/dev/sda2挂载到/media/sda2目录下，可以使用命令：
+[root@Server ~]# mount -t ext3 /dev/sda2 /media/sda2
+//挂载光盘
+[root@Server ~]# mount -t iso9660 /dev/cdrom  /media/cdrom  
+或者使用下面的命令也可以完成光盘的挂载
+[root@Server ~]# mount  /media/cdrom  
+
+
+
+
+
+作业：
+
+1、新添加一块20G硬盘
+2、在系统中查看挂载情况
+3、对新添加的20G硬盘进行分区，分别建立
+     1-2G  2-2G  3-3G 4-0G 5-2G 6-3G
+     /dev/sdb1  /dev/sdb2  .../dev/sd6
+     将sdb5指定为swap分区类型
+4、写入硬盘分区表
+5、查看第二块硬盘分区情况
+6、分别手动和自动挂载    自动挂载配置文件为/etc/fstab
+
+/media/system /media/office /media/film /media/game /media/soft 
+/media/bak 
+        
+7、查看目前服务器两块硬盘分区和挂载情况
+
+
+
+
+
+
+
+
+
+例如：把文件file1复制为文件file2：
+[root@Server ~]# dd  if=file1?  of=file2
+
+
+
+=======================================================================================================
+
+【7 软件管理】
+
+
+软件管理：
+一、windows：exe   
+       下载相应的安装包（exe格式）：官方网站、360软件管家、华军、中关村在线……
+    软件，程序    
+   
+二、Linux：GNU、GPL   开源操作系统   开源软件
+1、linux软件管理介绍
+    rpm yum 源码
+    .bin .sh .pl .bundle这一类软件只需要赋予可执行权限，直接运行即可安装。
+
+2、cpu平台:i386 486 586 686 表示32位软件
+		x86_64 表示64为软件
+		noarch 表示32,64通用
+    
+3、安装一个程序之后：
+        程序调用文件:命令文件   /usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin:/root/bin
+        配置文件：开启或关闭或新增某些功能  /etc      .conf
+        日志文件：/var/log/messages  
+
+三、Linux软件管理方式
+1、rpm
+        安装是使用全文件名
+    安装
+        rpm -ivh libmpc-1.0.1-3.el7.x86_64.rpm
+    卸载
+        rpm -e libmpc       
+    升级
+        rpm -U vsftpd-4.0.2-21.el7.x86_64.rpm
+    查询：
+         -q:查询软件是否被安装
+                rpm -q gcc
+         -ql:查询软件所有的文件及目录的绝对路径
+     rpm数据库重构：      
+         rpm --rebuilddb 
+    
+四、yum
+        redhat/centos   rpm包管理器
+1、当安装软件需要其他依赖包时使用yum软件管理
+2、yum仓库
+    cd /etc/yum.repos.d/
+    仓库文件以.repo结尾
+     centos操作系统，默认情况下不需要对yum仓库进行配置，yum仓库默认指向了centos开源镜像站 
+     file:   本地仓库
+     http：//www    网络仓库
+    ------------------------------------------------
+    [base]
+    name=centos
+    baseurl=file:///mnt/
+    enabled=1
+    gpgcheck=0
+    ---------------------------------------------------        
+3、安装
+     yum -y install samba
+4、升级
+     yum update samba
+5、卸载
+      yum remove samba
+6、清除缓存
+      yum clean all
+      yum makecache
+7、搜索软件包
+        yum search vsftpd
+    此命令会搜索到系统已经安装和yum源里没有安装的软件信息,可以用他简单测试yum是否好用
+8、查询   
+    #yum repolist                  
+9、查看软件组包含的具体软件：
+    #yum  groupinfo    
+10、查看软件依赖性关系:                 
+    #yum  deplist  
+11、查看模块属于哪个软件
+    # yum provides ld-linux.so.2      
+12、查看系统已经安装好的软件和没有安装的软件:
+	#yum list	
+13、查看系统已经安装好的软件组和没有安装的软件组:
+	#yum grouplist
+14、安装软件组:
+	#yum groupinstall  ‘软件组名称’
+15、重装：
+    #yum  reinstall    软件名           
+16、yum优先级
+    # yum install yum-plugin-priorities
+    修改仓库在每段最后添加：priority=1   （1-99，1优先级最高）
+
+ 
+五、源码安装
+    前提:系统内需要存在编译器gcc
+       #yum install  gcc  -y 
+    以归档的压缩包形式存在，有多个编译和配置文件
+    自定义安装路径、自定义软件功能模块的开启或关闭
+    可以再次编译或发行；可进行二次开发
+1、下载源码包
+    .tar.gz     .tar.bz2  
+    httpd.tar.gz
+    163\aliyun\centos.org
+2、安装三部曲
+    （1）解压源码包
+         tar -zxvf httpd-2.4.23.tar.gz
+    （2）环境检测
+             cd httpd-2.4.23/
+            ./configure 
+            #如果出现erro，代表检测不通过，则使用yum安装相应的依赖包
+    （3）编译并安装
+             make && make install 
+3、卸载：两种方法
+     （1）直接删除安装目录
+     （2）cd到解压目录
+                        #make uninstall
+                        #make clean
+                        #make distclean
+
+------------练习-------------------------------
+
+一、rpm   <选项>　<软件包名>
+安装选项
+-i 安装一个以前从未安装过的软件包。
+例如：#rpm   –ivh   zsh-4.2.6-1.i386.rpm
+其它配用选项
+-v  将安装过程打印在屏幕上；
+-h  以hash字符“#”显示安装进度条
+
+
+-e 卸载一个已经安装过的软件包。
+例如：#rpm   –e   zsh
+
+升级选项
+-U 对一个已经安装的旧版本软件包进行升级（如果以前没有安装过此包则安装它）。
+-F  对一个已经安装的旧版本软件包进行升级。
+其它配用选项
+--force 强制执行，它与-Uvh组合使用可重新安装某个已经安装的软件包当中丢失的文件。
+--nodeps：安装、升级或卸载软件时，忽略依赖关系 
+
+
+
+二、通过RPM来查询的指令与语法如下：
+rpm    <选项>　<软件名｜软件包名｜文件名>
+查询选项
+–q  软件名：查询某一个RPM包是否已安装
+–qi  软件名：查询某一个RPM包的详细信息
+–ql  软件名：列出某RPM包中所包含的文件
+–qf  文件名：查询某文件属于哪一个RPM包
+–qa ：列出当前系统所有已安装的包
+–qip 软件包：列出未安装RPM包的详细信息
+–qlp 软件包：列出未安装RPM包中的文件
+
+
+
+练习任务：
+1、将光驱挂载到服务器中，挂载目录为/media/cdrom
+2、将/dev/sdb6做限制，容量为80-100M，个数为40-50
+3、查询本机的vim或其它应用程序安装情况，并重新安装（可覆盖安装）
+
+
+
+==============================================================================================
+
+【8 进程管理】
+
+
+
+一、进程和线程
+1、进程和线程概述
+        进程（process）是指在系统中正在运行的一个应用程序，是系统资源分配的基本单位，在内存中有其完备的数据空间和代码空间，拥有完整的虚拟空间地址。一个进程所拥有的数据和变量只属于它自己。
+        线程（thread）是进程内相对独立的可执行单元，所以也被称为轻量进程（lightweight processes）；是CPU调度和分派的基本单位。它与父进程的其它线程共享该进程所拥有的全部代码空间和全局变量，但拥有独立的堆栈（即局部变量对于线程来说是私有的）。
+2、进程和线程联系
+     一个进程至少拥有一个线程——主线程，也可以拥有多个线程；
+     一个线程必须有一个父进程；
+     多个进程可以并发执行；
+     一个线程可以创建和撤销另一个线程；
+     同一个进程中的多个线程之间可以并发执行；
+
+3、多任务操作系统(如Windows)的基本原理是
+        操作系统将CPU的时间片分配给多个线程,每个线程在操作系统指定的时间片内完成(注意,这里的多个线程是分属于不同进程的).操作系统不断的从一个线程的执行切换到另一个线程的执行,如此往复,宏观上看来,就好像是多个线程在一起执行.由于这多个线程分属于不同的进程,因此在我们看来,就好像是多个进程在同时执行,这样就实现了多任务.
+
+ 
+ 二、进程控制
+ 1、查看进程
+ （1）ps 
+	#ps auxf
+	    a 只能查看所有终端进程
+	    u 显示进程拥有者
+	    x 显示系统内所有进程
+	    f 显示进程之间的父子关系
+    结果字段说明：
+        USER:启动该进程的用户；
+        PID:该进程在系统中的数字ID号，在当前系统中是唯一的；
+        %cpu 进程占用的cpu百分比
+	    %mem 进程占用memory百分比
+	    VSZ	 进程占用的虚拟内存大小
+	    RSS  占用的物理内存大小
+        TTY:表明该进程在哪个终端上运行，“？”表示未知或不需要终端；
+        STAT:显示进程的当前状态，如S（休眠）、R（运行）、Z（僵死）、<（高优先级）、N（低优先级）、s（父进程）、+（前台进程）。对于处于僵死状态的进程应该手动终止；
+        START:启动该进程的时间；
+        TIME:该进程占用的CPU时间；
+        COMMAND：启动该进程的命令。
+	    
+	  
+    #ps -elf
+	-e显示所有进程（进程名称）
+	-l长格式显示
+	-f完整格式	
+	#ps -e 常用
+	
+（2）pstree
+	查看进程树
+	#pstree
+	-a 显示参数
+	-p 显示pid
+	-u 显示用户名
+	
+（3）lsof：列出文件的进程（应用范围有限，只能查看带端口的进程）
+	lsof -i:80
+	查看端口为80的进程
+
+（4）pidof：查看指定进程名称的进程号
+	#pidof 进程名称
+	
+（5）# pgrep -l eyes
+	1179 xeyes
+	
+（6）top 
+	实时的查看进程的状态
+	> 往下翻页
+	< 往上翻页
+	M 按内存排序
+	P 按cpu排序
+	N 按启动时间排序
+	k 输入pid杀死进程
+	h 打印帮助
+	q 退出
+    
+         
+2、杀死进程
+（1）按pid杀死进程
+	#kill 信号(signal) pid
+	-1   HUP  重新加载进程或者重新加载配置文件
+	-9   KILL 强制杀死
+	-15  TERM 正常杀死(这个信号可以默认不写)
+	-18  CONT 激活进程
+	-19  STOP 挂起进程
+	#kill -HUP  pid
+	#kill -STOP pid
+
+	#kill -l
+	#man 7 signal 所有信号的解释
+	
+（2）#killall 信号 进程名称
+	    killall -9 vmware
+	
+（3）#pkill -9 进程名称
+	#pkill -t 终端  
+	不加-9只杀死在终端上运行的进程，加-9连终端本身一起干掉
+	#pkill -u 用户名称
+	#xkill
+	
+3、前后台操作
+	ctrl+z  把程序放到后台(这方法会让程序在后台暂停)
+	#fg %1  把程序调到前台，%是用来修饰job number，1就是job number。
+	#jobs   查看工作号
+	#bg %1  让暂停的程序在后台运行
+	#kill -9 %1
+	#kill -9 pid
+
+三、进程优先级
+1、优先级本身是不能修改，通过nice值修改优先级。
+	普通账户只能调高nice值，不能往低调
+	root账户随便调
+	nice值越高，优先级越低。
+	nice值范围:-20到19
+
+2、查看进程优先级
+		#top
+		    NI值就是优先级
+		#ps -elf
+		PR:priority
+		NI:nice
+
+3、指定进程优先级
+		#nice --15 firefox &   
+	修改进程优先级
+		# renice 10 7116   nice值前面不能加-
+
+
+
+
+
+
+
+
+
+at命令
+在指定的日期、时间点自动执行预先设置的一些命令操作，属于一次性计划任务
+服务脚本名称：/etc/init.d/atd
+设置格式：at  [HH:MM]  [yyyy-mm-dd]
+
+[root@localhost ~]# service atd start
+启动 atd：                                               [确定]
+[root@localhost ~]# at 23:45
+at> shutdown -h now
+at> <EOT>表示结束！！不要写！
+
+
+at基于用户的使用控制文件
+/etc/at.allow
+允许哪些用户可以使用at计划任务
+/etc/at.deny
+拒绝哪些用户使用at计划任务
+在配置文件中每一个用户名独占一行。
+
+
+开关cron服务
+系统管理员可以用service crond start|stop来开关cron服务
+用chkconfig或ntsysv选择cron服务的默认开启关闭
+job 1 at 2009-09-14 23:45
+[root@localhost ~]# atq
+1       2009-09-14 23:45 a root
+
+
+
+
+管理cron计划任务
+编辑计划任务：crontab  -e  [-u  用户名]
+查看计划任务：crontab  -l  [-u  用户名]
+删除计划任务：crontab  -r  [-u  用户名]
+
+
+
+crontab任务的配置格式
+时间数值的特殊表示方法
+*	   表示该范围内的任意时间
+,    表示间隔的多个不连续时间点
+-	   表示一个连续的时间范围
+/	   指定间隔的时间频率
+应用示例
+0  17  *  *  1-5		周一到周五每天17:00 
+30  8  *  *  1,3,5	每周一、三、五的8点30分
+0  8-18/2  *  *  *	8点到18点之间每隔2小时
+0  *  */3  *  *		每隔3天
+
+
+
+=======================================================================================
+
+【9 网络管理】
+
+
+网络配置通常包括主机名、IP地址、子网掩码、默认网关、DNS服务器等
+
+相关的配置文件有网卡配置文件、 /etc/sysconfig/network、/etc/hosts
+/etc/resolv.conf     /etc/host.conf等文件
+
+
+/etc/sysconfig/network
+主要用于设置基本网络配置，包括主机名称、网关等。
+
+
+/etc/sysconfig/nework-scripts/ifcfg-ethN 
+该配置文件是网卡配置文件，保存了网卡设备名、IP地址、子网掩码、网关等配置信息。
+
+DEVICE=eth0	           网络适配器名称
+BOOTPROTO=static	   网络地址类型
+BROADCAST=192.168.1.255    网络广播地址
+HWADDR=                    网卡物理地址
+IPADDR=192.168.1.116       IP地址
+NETMASK=255.255.255.0      子网掩码
+NETWORK=192.168.1.0        IP路由段
+GATEWAY=192.168.1.16      网关地址
+ONBOOT=yes                 是否启动
+TYPE=Ethernet              类型
+
+操作步骤：
+
+1、查看宿主机IP地址
+2、将宿主机IP地址加100为虚拟机LINUX当中的eth0的主IP
+3、通过网络配置文件将主机名修改为自己的姓名
+4、通过网卡配置文件将eth0配置为可用IP
+5、手动指定加99的地址为eth0的主IP
+6、查看当前eth0的IP信息
+7、重启网络服务
+8、查看当前eth0的IP信息
+9、复制eth0的网卡配置文件为eth0:1
+10、修改eth0:1的网卡配置信息为加101
+11、指定eth0:1的网卡配置信息为加102
+12、查看当前eth0:1的IP信息
+13、重启网络服务
+14、查看当前所有网络网卡配置信息
+
+eth0=192.168.1.加了？
+eth0:1=192.168.1.加了？
+
+
+
+/etc/hosts
+用于本地名称解析，文件中存储IP地址和主机名的静态映射关系
+/etc/host.conf 
+用来指定如何进行域名解析
+
+
+/etc/resolv.conf文件 
+该文件用于指定系统所用的DNS服务器的IP地址，还可以设置当前主机所在的域以及DNS搜寻路径等 
+
+
+/etc/services 
+用于保存各种网络服务名称与该网络服务所使用的协议及默认端口号的映射关系 
+
+网络配置命令 – ifconfig 
+
+ifconfig命令加上-a参数可以显示所有的网络接口，包括启动的和未启动的。
+利用“ifconfig 指定的网络接口”命令，查看某一个网络接口的状况。
+ifconfig命令还可以用来启动和停止网络接口。如果要启动某个网络接口用up，关闭某个网络接口用down。
+
+
+
+
+
+
+=======================================================================================
+
+【10 服务管理】
+
+
+DNS服务器基础知识
+
+1、BIND服务软件包安装
+
+	1.1主程序文件
+	1.2缓存文件
+	1.3测试及客户端文件
+	1.4安全文件chroot..
+
+2、启用安全bind-chroot-admin -e
+
+3、/var/named/chroot/etc
+   将named.rfc1912.zones复制成为150X.com.zones
+   将caching缓存模板文件复制成为区域文件named.conf
+
+4、/var/named/chroot/var/named/
+
+    复制正、反向区域文件模板
+
+localdomain.zone  复制为正向解析文件150X.com.zone
+named.local复制为反向解析文件192.168.zone
+
+   修改正向、反向区域文件
+   150X.com.zone    192.168.zone
+    （域名-->IP）   （IP-->域名）
+   
+
+5、测试
+
+   5.1 ifconfig查看当前服务器eth0的IP地址
+   5.2 service network restart重启网卡服务
+   5.3 service named restart重启DNS服务
+   5.4 nslookup测试DNS解析过程
+
+ >150X.com
+ >www.150X.com
+ >dns.150X.com
+ >mail.150X.com
+
+ >192.168.1.253
+
+查看是否按练习解析出www.150X.com   dns.150X.com   mail.150X.com
+
+ >exit退出测试环境
+
+ #ping www.150X.com
+
+完成整个DNS配置与测试
