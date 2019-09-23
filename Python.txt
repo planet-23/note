@@ -1,29 +1,67 @@
- PYTHON语言基础：
-python是动态类型语言，变量不需要显式声明数据类型，解释器自动确定变量类型        #注释符号
-对象值比较==与引用判别is
+一、 PYTHON语言基础：
+ python是动态类型语言，变量不需要显式声明数据类型，解释器自动确定变量类型        #注释符号
+ 对象值比较==与引用判别is
 
-函数的定义：
-def f():
+ 函数的定义：
+ def f():
     函数体
 
 
-顺序结构：
-选择结构：if elif  else
-循环结构：range(start,stop[,step])
+ 顺序结构：
+ 选择结构：if elif  else
+ 循环结构：range(start,stop[,step])
         for 变量 对象集合：
             循环语句块
         while(条件表达式):
             循环语句块
-break语句，continue语句
-
-enumerate()函数与循环：
-for i,s in enumerate(array,start=1):
-    print("{1} {0} {1}".format(i,s))
+ break语句，continue语句
+ for语句和while语句都能跟随一个else子句，如果循环没有被break语句终止，则执行else
 
 
+ enumerate()函数与循环：                    //返回一个可迭代对象
+ for i,s in enumerate(array,start=1):
+     print("{1} {0} {1}".format(i,s))
+ 
+ zip（）函数与循环                    //将多个可迭代对象中的元素打包成一个个元组，元素个数不一样时，按最小的计算
+ map(func，seq1,seq2,.....)函数与循环                     //将func作用于所有所有seq ， seq相当于func的参数  ，当func为None，效果与zip一样
+ 
+四、常用内置数据类型
+ 1、数值数据类型：
+ int:0x 0o 0b
+ 0xf_ff_ff_ff  1_000_000(3.6版本以上)
+ int(x,base=10)//指定进制(base=2~36)
+ i.bit_length()  int.bit_length(i) #返回i的二进制位数，不包括括号
+ //  **
+ 
+ bool
+ float：1.   .2    1.2
+ Infinity -Infinity  NaN（非数值）
+ hex()#转变为十六进制字符串
+ fromhex()#将十六进制转换为浮点数
+ as_integer_ratio()#转化为分数
 
-
-
+ complex：3+4j -2.3-4j                   //cmath.sqrt() ，计算负数和复数的平方根
+ 
+ 2、序列数据类型：
+ str：chr（）    ord（）    r"\abc"   
+ tuple（元组类型）:(1,2,'3')
+ bytes（字节类型）：b"abc"
+ list（列表类型）：[1,"two"]
+ bytearray(字节数组)：表示可修改的字节数组
+ 
+ 3、集合数据类型：
+ set（集）：可变对象   {1,2,3}
+ frozenset(不可变集)：
+ 
+ 4、字典数据类型：
+ dict：  {1:"one",2:"two"}
+ p60
+ 
+ 5、格式化输出：
+ str.format(string1,value,value1....)
+ string.format(value,value1.....)
+ format(value,格式)
+ string%(value,value1)
 
 
 
