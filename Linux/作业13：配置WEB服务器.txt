@@ -1,0 +1,45 @@
+1、配置好DNS服务器
+
+2、测试DNS服务器解析
+   #nslookup
+   >localhost
+   >www.liuzhen.com
+   >172.16.2.252
+   >exit
+
+3、配置好YUM源
+
+  #yum install httpd -y
+
+4、启动WEB服务
+  #service httpd restart
+
+5、查看DNS服务和WEB服务是否正常
+  #service network restart
+  #service named restart
+
+
+6、打开图形界面进行防火墙放行
+  #setup
+  选择第二项，进入防火墙
+
+  #setenfoce 0
+
+7、进入图形界面，打开浏览器，输入www.liuzhen.com访问
+
+8、打开为空白
+
+9、创建网站首页
+   #touch /var/www/html/index.html
+   #vim /var/www/html/index.html
+   welcome to wuhan
+
+   :wq
+
+10、再次刷新浏览器网页，再次查看
+
+11、打开WIN7宿主机，将网络地址中添加DNS为虚拟机的IP
+
+12、打开WIN7宿主机的浏览器，输入www.liuzhen.com查看虚拟机中配置的WEB网站。
+
+13、成功！

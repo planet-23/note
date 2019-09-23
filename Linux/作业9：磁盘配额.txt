@@ -1,0 +1,99 @@
+实验作业：针对服务器用户进行磁盘空间限制
+
+
+
+1、创建myquota1\myquota2\myquota3\五个账号]\
+
+2、#df -h /home确定主机的/home目录是独立的
+
+4、#mount | grep home查看目录文件系统及权限
+
+5、#mount -o remount,usrquota,grpquota /home手动指定加入quota服务支持
+
+6、#mount | grep home再次查看目录文件系统及权限
+
+7、#quotacheck -avug -mf强制检查记录文件
+
+8、#ll -d /home/a *           创建quota记录文件   --->  /home/aquota.group   /home/aquota.user记录文件已经建立
+
+9、#quotaon -auvg启动quota
+
+10、#edquota -u myquota1编辑账号myquota1/组群的限值与宽限时间
+        filesystem	blocks	soft	hard	inodes	soft	hard
+	/dev/sda5	64	0	0	8	0	0
+
+        filesystem	blocks	soft	hard	inodes	soft	hard
+	/dev/sda5	64	250000	300000	8	0	0
+
+
+11、其它4个用户的设定可以复制
+	#edquota -p myquota1 -u myquota2
+	#edquota -p myquota1 -u myquota3
+	#edquota -p myquota1 -u myquota4
+	#edquota -p myquota1 -u myquota5
+
+12、#groupadd myquotagrp创建一个myquotagrp的组
+
+13、#edquota -g myquotagrp修改组群的quota配额
+        filesystem	blocks	soft	hard	inodes	soft	hard
+	/dev/sda5	320	900000	1000000	  40	0	0
+
+
+14、#edquota -t修改原7天宽限时间为14天
+
+
+15、#repquota -auvs对文件系统的限额做报表
+
+
+
+=====================测试与管理=============================
+
+1、利用myquota1身份创建一个270MB的大文件，查看结果
+	#su myquota1
+	$cd /home/myquota1
+	$dd if=/dev/zero of=bigfile bs=1M count=270
+
+2、$su root
+
+3、#repquota -auv可以发现myquota1的grace出现了，开始倒数
+
+4、再创建另外一个大文件，让总容量超过300MB
+	#su myquota1
+	$cd /home/myquota1
+	$dd if=/dev/zero of=bigfile2 bs=1M count=300
+
+5、$du -sk到极限了300000  .
+
+6、$su root
+   #repquota -au查看最终报表
+
+
+==================结论=======================
+
+1、完成上述myquota1的磁盘限额（配额）的设置
+
+2、针对工作中指定用户空间大小做限制
+
+3、合理分配磁盘空间大小，方便服务器维护与管理	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

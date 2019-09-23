@@ -1,0 +1,108 @@
+配置DNS服务器
+
+1、配置网卡eth0为静态地址
+   #vim /etc/sysconfig/network-scripts/ifcfg-eth0
+
+2、检查eth0地址
+   #ifconfig
+
+3、配置yum源
+   #cd /etc/yum.repos.d/
+   #rm -rf *
+   #vim server.repo
+   [server]
+   name=server
+   baseurl=file:///mnt
+   gpgcheck=0
+   enabled=1
+   :wq
+
+4、清除yum缓存
+   #yum clean all
+
+5、挂载光盘
+   #mount /dev/sr0 /mnt
+
+6、安装dns服务组件
+   #yum install bind -y
+
+7、安装dns虚拟目录安全组件
+   #yum install bind-chroot -y
+
+8、启用生效dns服务
+   #service named restart
+
+9、测试默认dns服务
+   #nslookup
+   >localhost
+   >127.0.0.1
+   >exit
+
+10、安装测试完毕
+
+
+================================================
+配置DNS服务
+
+1、输入dns主文件配置
+   #cd /var/named/
+   #cd chroot/etc
+   /var/named/chroot/etc/
+   named.conf核心文件--》named.rfc1912.zones主配置文件
+
+2、配置核心文件named.conf
+   修改默认侦听地址由127.0.0.1修改为any
+   修改访问地址由localhost修改为any
+   修改主配置文件由named.rfc1912.zones修改为named.zones
+
+3、配置主配置文件named.zones
+   配置正向解析和反向解析地址
+
+    zone "liuzhen.com" IN {
+          type master;
+          file "liuzhen.localhost";
+          allow-update { none; };
+    };
+
+
+
+     zone "2.16.172.in-addr.arpa" IN {
+         type master;
+         file "liuzhen.loopback";
+          allow-update { none; };
+     };
+
+4、修改正向解析文件liuzhen.localhost
+   #cp -p named.localhost liuzhen.localhosti
+   #vim liuzhen.localhost
+
+5、修改反向解析文件liuzhen.loopback
+   #cp -p named.loopback liuzhen.loopback
+   #vim liuzhen.loopback
+
+6、测试dns解析
+   #nslookup
+   >localhost
+   >www.liuzhen.com
+   >172.16.2.252
+   >exit
+
+7、配置本地解析文件
+   #vim /etc/hosts
+
+172.16.2.252    server www.liuzhen.com ftp.liuzhen.com ns.liuzhen.com liuzhen.com
+127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+
+
+8、重启dns服务
+   #service named restart
+
+9、编辑主机名称为server
+   #vim /etc/sysconfig/network
+
+10、配置结束
+
+
+
+

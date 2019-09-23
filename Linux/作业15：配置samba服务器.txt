@@ -1,0 +1,65 @@
+1、配置本地YUM源
+   #cd /etc/yum.repo.d/
+   #rm -rf *
+   #touch server.repo
+   #vim server.repo
+    [server]
+     name=server
+     baseurl=file:///mnt
+     gpgcheck=0
+     enabled=1
+
+     按ESC键
+     :wq
+    
+   #mount /dev/sr0 /mnt
+
+2、清除YUM源缓存
+   #yum clean all
+
+3、安装samba服务组件
+   #yum install samba -y
+
+4、查看安装情况
+   #rpm -qa | grep samba
+
+5、编辑配置文件
+   #cd /etc/samba
+   #cp -p smb.conf smb.conf.bak
+   #vim smb.conf（编辑最后几行）
+
+
+    [public]
+    comment = public
+    path = /home/samba
+    guest ok = yes
+    public = yes
+
+
+
+     按ESC键
+     :wq
+
+   #service smb restart
+
+6、配置共享目录
+   #cd /home
+   #mkdir samba
+   #chmod 777 samba/
+   #ll
+
+7、访问测试该共享目录
+   
+   linux中测试#smbclient -L 192.168.0.252显示共享目录
+   linux中访问查看共享内容#smbclient //192.168.0.252/samba
+   smb:\>ls
+   smb:\>exit
+   #
+
+
+   windows的资源管理器：地址栏\\192.168.0.252
+
+8、设置防火墙权限
+   #setup
+    samba设置为放行
+   #setenforce 0设置selinux为允许

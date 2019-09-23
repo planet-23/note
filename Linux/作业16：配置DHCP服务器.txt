@@ -1,0 +1,15 @@
+1、挂载光盘
+
+2、查看DHCP安装文件（2个）dir dhcp*
+
+3、查看安装情况#rpm -qa | grep dhcp
+
+4、#rpm -ivh dhcp-4.............
+
+5、#rpm -qa | grep dhcp      查看两个安装成功的文件
+
+6、打开DHCP配置文件/etc/dhcp/dhcpd.conf，复制模板文件过来覆盖该文件
+
+7、查看并编辑DHCP主配置文件
+
+8、#service dhcp restart
