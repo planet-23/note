@@ -9,6 +9,7 @@
 
  顺序结构：
  选择结构：if elif  else
+             a= x if x>y else y
  循环结构：range(start,stop[,step])
         for 变量 对象集合：
             循环语句块
