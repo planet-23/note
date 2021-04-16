@@ -1,0 +1,14 @@
+Serializable
+基础控制器：ExpoBaseController
+	返回类型：ResponseEntity
+	基础返回类型：BaseResult
+	分页：PageHelper，PageInfo，BaseQuery
+
+BaseService,BaseServiceImpl
+BaseMapper
+
+条件查询:Example
+
+工具：ExcelUtil、BeanUtil、StringUtil、DateUtil、Converter、AlikAssert（断言）、ExcelImportUtil
+
+
